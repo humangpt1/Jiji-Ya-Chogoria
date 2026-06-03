@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Jiji ya Chogoria - Buy &amp; Sell Locally</title>
+    <meta name="description" content="Jiji ya Chogoria — The #1 local marketplace in Chogoria, Tharaka-Nithi. Buy and sell electronics, fashion, furniture, farm produce and more.">
+    <meta name="theme-color" content="#ff6b35">
+    <meta property="og:title" content="Jiji ya Chogoria - Local Marketplace">
+    <meta property="og:description" content="Buy and sell locally in Chogoria, Tharaka-Nithi">
+    <meta property="og:image" content="/images/hero-woman.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="alternate icon" href="/favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ════════════════════════════════════════════════════════════════ -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="#" class="logo" onclick="showPage('home');return false;">
+            <span class="logo-icon"><i class="fas fa-store"></i></span>
+            <div>
+                <span class="logo-main">Jiji ya Chogoria</span>
+                <span class="logo-sub">Local Marketplace</span>
+            </div>
+        </a>
+
+        <div class="search-bar" id="globalSearch">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search listings..." onkeyup="handleSearchKey(event)">
+            <button onclick="doSearch()">Search</button>
+        </div>
+
+        <div class="nav-links">
+            <a href="#" onclick="showPage('home');return false;" class="nav-link" data-page="home">Home</a>
+            <a href="#" onclick="showPage('listings');return false;" class="nav-link" data-page="listings">Browse</a>
+            <a href="#" onclick="showPage('featured');return false;" class="nav-link featured-link" data-page="featured">
+                <i class="fas fa-fire"></i> Featured
+            </a>
+            <a href="#" onclick="showPage('shops');return false;" class="nav-link" data-page="shops"><i class="fas fa-store-alt"></i> Shops</a>
+            <a href="#" onclick="showPage('chat');return false;" class="nav-link" data-page="chat"><i class="fas fa-comments"></i> Community</a>
+            <a href="#" onclick="showPage('download-app');return false;" class="nav-link" data-page="download-app"><i class="fas fa-mobile-alt"></i> App</a>
+        </div>
+
+        <div class="nav-actions">
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+                <i class="fas fa-sun"></i>
+            </button>
+            <div id="navGuest" class="nav-auth">
+                <button class="btn-outline" onclick="showPage('login')">Login</button>
+                <button class="btn-primary" onclick="showPage('register')">Register</button>
+            </div>
+            <div id="navUser" class="nav-user hidden">
+                <a href="#" onclick="showPage('post-ad');return false;" class="btn-post">
+                    <i class="fas fa-plus"></i> Post Ad
+                </a>
+                <div class="nav-notif" onclick="showPage('messages')" title="Messages" id="navDMIcon">
+                    <i class="fas fa-envelope"></i>
+                    <span class="notif-badge hidden" id="dmBadge">0</span>
+                </div>
+                <div class="nav-notif" onclick="showPage('notifications')" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-badge hidden" id="notifBadge">0</span>
+                </div>
+                <div class="nav-avatar" onclick="toggleUserMenu()">
+                    <div class="avatar-circle" id="navAvatar">U</div>
+                    <i class="fas fa-chevron-down" style="font-size:0.65rem;"></i>
+                </div>
+                <div class="user-dropdown hidden" id="userDropdown">
+                    <div class="dropdown-header" id="dropdownName">My Account</div>
+                    <a href="#" onclick="showPage('dashboard');closeDropdowns()"><i class="fas fa-th-large"></i> Dashboard</a>
+                    <a href="#" onclick="showPage('my-ads');closeDropdowns()"><i class="fas fa-tags"></i> My Listings</a>
+                    <a href="#" onclick="showPage('messages');closeDropdowns()"><i class="fas fa-envelope"></i> Messages <span id="dropdownDmBadge" class="dd-badge hidden"></span></a>
+                    <a href="#" onclick="showPage('favorites');closeDropdowns()"><i class="fas fa-heart"></i> Saved</a>
+                    <a href="#" onclick="showPage('payments');closeDropdowns()"><i class="fas fa-crown"></i> Membership</a>
+                    <a href="#" onclick="showPage('profile');closeDropdowns()"><i class="fas fa-user-cog"></i> Settings</a>
+                    <hr>
+                    <a href="#" onclick="logout()" class="danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+
+        <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+
+    <!-- Category strip (desktop) -->
+    <div class="cat-strip" id="catStrip"></div>
+
+    <!-- Mobile slide menu (fixed panel, slides from right) -->
+    <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+        <!-- Header row -->
+        <div class="mobile-menu-header">
+            <span class="mobile-menu-logo"><i class="fas fa-store" style="color:var(--accent1);margin-right:7px"></i>Jiji ya Chogoria</span>
+            <button class="menu-close-btn" onclick="closeMobileMenu()" aria-label="Close menu"><i class="fas fa-times"></i></button>
+        </div>
+
+        <!-- User profile card (shown when logged in) -->
+        <div class="mobile-user-card hidden" id="mobileUserCard">
+            <div class="mobile-user-card-avatar" id="mobileCardAvatar">U</div>
+            <div class="mobile-user-card-info">
+                <div class="mobile-user-card-name" id="mobileCardName">My Account</div>
+                <div class="mobile-user-card-sub" id="mobileCardSub">Member</div>
+            </div>
+        </div>
+
+        <!-- Guest CTA buttons (shown when NOT logged in) -->
+        <div class="mobile-guest-cta" id="mobileGuest">
+            <a href="#" onclick="showPage('login');closeMobileMenu()" class="mg-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="#" onclick="showPage('register');closeMobileMenu()" class="mg-register"><i class="fas fa-user-plus"></i> Sign Up</a>
+        </div>
+
+        <!-- Search -->
+        <div class="mobile-search">
+            <input type="text" id="mobileSearch" placeholder="Search listings..." autocomplete="off">
+            <button onclick="doMobileSearch()" aria-label="Search"><i class="fas fa-search"></i></button>
+        </div>
+
+        <!-- Explore links -->
+        <div class="mobile-menu-section-label">Explore</div>
+        <a href="#" onclick="showPage('home');closeMobileMenu()"><i class="fas fa-home"></i> Home</a>
+        <a href="#" onclick="showPage('listings');closeMobileMenu()"><i class="fas fa-th-large"></i> Browse All</a>
+        <a href="#" onclick="showPage('featured');closeMobileMenu()"><i class="fas fa-fire" style="color:#ff6b35"></i> Featured</a>
+        <a href="#" onclick="showPage('shops');closeMobileMenu()"><i class="fas fa-store-alt"></i> Local Shops</a>
+        <a href="#" onclick="showPage('chat');closeMobileMenu()"><i class="fas fa-comments"></i> Community Chat</a>
+        <a href="#" onclick="showPage('download-app');closeMobileMenu()"><i class="fas fa-mobile-alt"></i> Download App</a>
+
+        <!-- My Account links (shown when logged in) -->
+        <div id="mobileUser" class="hidden">
+            <div class="mobile-menu-section-label">My Account</div>
+            <a href="#" onclick="showPage('post-ad');closeMobileMenu()" style="color:var(--accent1);font-weight:700;"><i class="fas fa-plus-circle"></i> Post New Ad</a>
+            <a href="#" onclick="showPage('dashboard');closeMobileMenu()"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="#" onclick="showPage('my-ads');closeMobileMenu()"><i class="fas fa-tags"></i> My Listings</a>
+            <a href="#" onclick="showPage('messages');closeMobileMenu()"><i class="fas fa-envelope"></i> Messages <span id="mobileDmBadge" class="dd-badge hidden"></span></a>
+            <a href="#" onclick="showPage('notifications');closeMobileMenu()"><i class="fas fa-bell"></i> Notifications</a>
+            <a href="#" onclick="showPage('favorites');closeMobileMenu()"><i class="fas fa-heart"></i> Saved Items</a>
+            <a href="#" onclick="showPage('payments');closeMobileMenu()"><i class="fas fa-crown"></i> Membership</a>
+            <a href="#" onclick="showPage('profile');closeMobileMenu()"><i class="fas fa-user-cog"></i> Settings</a>
+            <a href="#" onclick="logout();closeMobileMenu()" class="danger"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+
+        <!-- Category chips -->
+        <div class="mobile-menu-cats" id="mobileCats"></div>
+    </div>
+</nav>
+<!-- Backdrop overlay for mobile menu -->
+<div class="menu-overlay" id="menuOverlay" onclick="closeMobileMenu()"></div>
+
+<!-- ═══ MOBILE BOTTOM NAV ════════════════════════════════════════════════════ -->
+<nav class="bottom-nav" id="bottomNav">
+    <a href="#" class="bot-nav-item active" data-page="home" onclick="showPage('home');setBottomNav(this);return false;">
+        <i class="fas fa-home"></i><span>Home</span>
+    </a>
+    <a href="#" class="bot-nav-item" data-page="listings" onclick="showPage('listings');setBottomNav(this);return false;">
+        <i class="fas fa-th-large"></i><span>Browse</span>
+    </a>
+    <a href="#" class="bot-nav-item bot-nav-featured" data-page="featured" onclick="showPage('featured');setBottomNav(this);return false;">
+        <span class="bot-nav-fire"><i class="fas fa-fire"></i><span>Featured</span></span>
+    </a>
+    <a href="#" class="bot-nav-item" data-page="messages" onclick="showPage('messages');setBottomNav(this);return false;" style="position:relative">
+        <i class="fas fa-envelope"></i><span>Messages</span>
+        <span class="bot-nav-badge hidden" id="botDmBadge"></span>
+    </a>
+    <a href="#" class="bot-nav-item" data-page="account" onclick="handleAccountNav();return false;">
+        <i class="fas fa-user"></i><span>Account</span>
+    </a>
+</nav>
+
+<!-- ═══ TOAST ════════════════════════════════════════════════════════════════ -->
+<div id="toast" class="toast hidden"></div>
+<div id="pageLoader" class="page-loader hidden"><div class="loader-spinner"></div></div>
+
+<!-- ═══ PAGES ════════════════════════════════════════════════════════════════ -->
+<main id="app">
+
+<!-- ─── HOME PAGE ─────────────────────────────────────────────────────────── -->
+<div id="page-home" class="page">
+    <div class="hero">
+        <div class="hero-bg-glow"></div>
+        <div class="hero-woman-img" aria-hidden="true">
+            <img src="/images/hero-woman.png" alt="" loading="eager">
+        </div>
+        <div class="hero-content container">
+            <div class="hero-badge"><i class="fas fa-map-marker-alt"></i> Chogoria, Tharaka-Nithi</div>
+            <h1>Buy &amp; Sell in<br><span class="grad-text">Chogoria</span></h1>
+            <p>The #1 local marketplace — find great deals near you</p>
+            <div class="hero-search">
+                <div class="hs-input-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="heroSearch" placeholder="What are you looking for?">
+                </div>
+                <select id="heroCategory">
+                    <option value="">All Categories</option>
+                </select>
+                <button onclick="doHeroSearch()"><i class="fas fa-search"></i> Search</button>
+            </div>
+            <div class="hero-stats" id="heroStats">
+                <div class="hero-stat"><span class="hero-stat-num" id="statListings">0</span><span>Listings</span></div>
+                <div class="hero-stat-div"></div>
+                <div class="hero-stat"><span class="hero-stat-num">100%</span><span>Local</span></div>
+                <div class="hero-stat-div"></div>
+                <div class="hero-stat"><span class="hero-stat-num">Free</span><span>to Browse</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section-title">
+            <h2><i class="fas fa-th"></i> Browse by Category</h2>
+            <a href="#" onclick="showPage('listings');return false;" class="see-all">All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="categories-grid" id="categoriesGrid"></div>
+
+        <!-- Featured CTA Strip -->
+        <div class="featured-strip" onclick="showPage('featured')">
+            <div class="fstrip-left">
+                <div class="fstrip-icon"><i class="fas fa-fire"></i></div>
+                <div>
+                    <strong>Featured Listings</strong>
+                    <span>Top products boosted by sellers</span>
+                </div>
+            </div>
+            <div class="fstrip-right">
+                <span>View Top 10 <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </div>
+
+        <div class="section-title">
+            <h2><i class="fas fa-star"></i> Featured Listings</h2>
+            <a href="#" onclick="showPage('featured');return false;" class="see-all">See all <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="products-grid" id="featuredGrid">
+            <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
+            <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
+        </div>
+
+        <div class="section-title">
+            <h2><i class="fas fa-clock"></i> Latest Listings</h2>
+            <a href="#" onclick="showPage('listings');return false;" class="see-all">See all <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="products-grid" id="recentGrid">
+            <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
+            <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
+        </div>
+
+        <div class="cta-banner">
+            <div class="cta-text">
+                <div class="cta-icon"><i class="fas fa-bullhorn"></i></div>
+                <div>
+                    <h3>Start Selling Today!</h3>
+                    <p>Reach thousands of buyers in Chogoria. Membership from <span data-posting-fee>KES 100</span>/month</p>
+                </div>
+            </div>
+            <button class="btn-primary large" onclick="handlePostAdMobile()">
+                <i class="fas fa-plus"></i> Post Free Ad
+            </button>
+        </div>
+
+        <!-- ── How to Make Money Section ─────────────────────── -->
+        <div class="how-to-section">
+            <div class="how-to-header">
+                <h2>Short on money? <span class="grad-text">We know how to fix it.</span></h2>
+                <p>There are a couple of ways to make money with Jiji ya Chogoria and provide for your family.</p>
+            </div>
+            <div class="how-to-cards">
+                <div class="how-to-card">
+                    <div class="how-to-card-icon"><i class="fas fa-recycle"></i></div>
+                    <div class="how-to-card-body">
+                        <h3>Sell things you don't use anymore</h3>
+                        <p>Take a careful look around! Old phone, furniture you never use, fancy clothes or jewelry — you can sell anything on Jiji ya Chogoria to real people around you. Buyers tend to buy used items because it's cheaper. Turn things into cash!</p>
+                        <a href="#" onclick="handlePostAdMobile();return false;" class="how-to-link">How to sell on Jiji? <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="how-to-card">
+                    <div class="how-to-card-icon"><i class="fas fa-briefcase"></i></div>
+                    <div class="how-to-card-body">
+                        <h3>Offer your service to your people</h3>
+                        <p>Think of your strongest skills that could be useful to someone else — perhaps you can sew, drive a truck, tutor kids, do repairs, or anything else. Post an advert in Services and get paid for your skills!</p>
+                        <a href="#" onclick="filterByCategory('services');return false;" class="how-to-link">Post a service <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── FEATURED PAGE ──────────────────────────────────────────────────────── -->
+<div id="page-featured" class="page hidden">
+    <div class="featured-page-hero">
+        <div class="container">
+            <div class="fp-hero-content">
+                <div class="fp-fire-icon"><i class="fas fa-fire"></i></div>
+                <h1>Featured <span class="grad-text">Listings</span></h1>
+                <p>Top sellers who boosted their listings — the more you boost, the higher you rank!</p>
+                <div class="fp-hero-stats">
+                    <span><i class="fas fa-trophy"></i> Top 10 Ranked</span>
+                    <span><i class="fas fa-bolt"></i> Updated Live</span>
+                    <span><i class="fas fa-star"></i> Boost from KES 300</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Leaderboard top 3 podium -->
+        <div class="section-title" style="margin-top:32px">
+            <h2><i class="fas fa-trophy"></i> Top 10 Leaderboard</h2>
+            <span class="see-all" style="color:var(--subtext2);font-size:0.8rem;">Ranked by boost amount</span>
+        </div>
+        <div id="top10List" class="top10-list">
+            <div class="loading-spinner-sm"></div>
+        </div>
+
+        <div class="section-title" style="margin-top:40px">
+            <h2><i class="fas fa-fire"></i> All Featured Products</h2>
+        </div>
+        <div class="products-grid" id="featuredPageGrid">
+            <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
+            <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
+        </div>
+        <div id="featuredEmpty" class="empty-state hidden">
+            <i class="fas fa-fire-alt"></i>
+            <h3>No featured listings yet</h3>
+            <p>Be the first to boost your listing and reach the top!</p>
+        </div>
+
+        <!-- Boost CTA -->
+        <div class="boost-cta-box" id="boostCtaBox">
+            <div class="bcta-inner">
+                <div class="bcta-icon"><i class="fas fa-rocket"></i></div>
+                <div class="bcta-text">
+                    <h3>Boost Your Listing</h3>
+                    <p>Pay KES 300 or more to feature your listing here. The higher you pay, the higher you rank!</p>
+                </div>
+                <button class="btn-primary large" onclick="handleBoostCta()">
+                    <i class="fas fa-bolt"></i> Boost Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── LISTINGS PAGE ──────────────────────────────────────────────────────── -->
+<div id="page-listings" class="page hidden">
+    <div class="container">
+        <div class="listings-layout">
+            <aside class="filters-sidebar">
+                <div class="filter-header">
+                    <h3><i class="fas fa-filter"></i> Filters</h3>
+                    <button onclick="clearFilters()" class="clear-filters">Clear</button>
+                </div>
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select id="filterCategory" onchange="applyFilters()">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Condition</label>
+                    <select id="filterCondition" onchange="applyFilters()">
+                        <option value="">Any</option>
+                        <option value="new">New</option>
+                        <option value="used">Used</option>
+                        <option value="refurbished">Refurbished</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Min Price (KES)</label>
+                    <input type="number" id="filterMinPrice" placeholder="0" onchange="applyFilters()">
+                </div>
+                <div class="filter-group">
+                    <label>Max Price (KES)</label>
+                    <input type="number" id="filterMaxPrice" placeholder="Any" onchange="applyFilters()">
+                </div>
+                <div class="filter-group">
+                    <label>Location</label>
+                    <input type="text" id="filterLocation" placeholder="e.g. Chogoria" onchange="applyFilters()">
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Distance</label>
+                    <select id="filterRadius" onchange="applyFilters()">
+                        <option value="">Any distance</option>
+                        <option value="5">Within 5 km</option>
+                        <option value="10">Within 10 km</option>
+                        <option value="20">Within 20 km</option>
+                        <option value="50">Within 50 km</option>
+                    </select>
+                    <button type="button" class="btn-use-location-small" id="filterLocBtn" onclick="useMyLocationForFilter()">
+                        <i class="fas fa-crosshairs"></i> Use My Location
+                    </button>
+                </div>
+                <button class="btn-primary full-width" onclick="applyFilters()">Apply Filters</button>
+            </aside>
+            <div class="listings-main">
+                <div class="listings-header">
+                    <h2 id="listingsTitle">All Listings</h2>
+                    <div class="sort-bar">
+                        <span id="listingsCount">Loading...</span>
+                        <select id="sortSelect" onchange="applyFilters()">
+                            <option value="">Newest First</option>
+                            <option value="price_asc">Price: Low to High</option>
+                            <option value="price_desc">Price: High to Low</option>
+                            <option value="popular">Most Popular</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="products-grid" id="listingsGrid"></div>
+                <div class="pagination" id="listingsPagination"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── PRODUCT DETAIL PAGE ───────────────────────────────────────────────── -->
+<div id="page-product" class="page hidden">
+    <div class="container">
+        <div class="breadcrumb" id="productBreadcrumb"></div>
+        <div class="product-layout">
+            <div class="product-main">
+                <div class="product-gallery" id="productGallery"></div>
+                <div class="product-info">
+                    <div class="product-header-row">
+                        <h1 id="productTitle"></h1>
+                        <button class="fav-btn" id="favBtn" onclick="toggleFav()"><i class="far fa-heart"></i></button>
+                    </div>
+                    <div class="product-price-row">
+                        <span class="product-price" id="productPrice"></span>
+                        <span class="negotiable-badge hidden" id="negotiableBadge">Negotiable</span>
+                    </div>
+                    <div class="product-meta" id="productMeta"></div>
+                    <div class="product-description" id="productDescription"></div>
+                    <div id="productMapSection" class="hidden">
+                        <div class="product-map-header"><i class="fas fa-map-marker-alt"></i> Item Location</div>
+                        <div id="productMap" class="product-map"></div>
+                    </div>
+                    <div class="product-report">
+                        <button onclick="showReportModal()" class="report-btn">
+                            <i class="fas fa-flag"></i> Report Listing
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <aside class="seller-card">
+                <h3><i class="fas fa-user-circle"></i> Seller Info</h3>
+                <div id="sellerInfo"></div>
+                <div class="seller-actions" id="sellerActions"></div>
+                <!-- Boost option for own listings -->
+                <div id="boostOwnProduct" class="hidden" style="margin-top:18px;padding-top:18px;border-top:1px solid var(--border);">
+                    <p style="font-size:0.8rem;color:var(--subtext);margin-bottom:10px;"><i class="fas fa-rocket" style="color:var(--accent1)"></i> Boost this listing to get more visibility</p>
+                    <button class="btn-primary full-width" onclick="showBoostModal(currentProductId)">
+                        <i class="fas fa-bolt"></i> Boost from KES 300
+                    </button>
+                </div>
+            </aside>
+        </div>
+        <div class="related-section">
+            <h3><i class="fas fa-layer-group"></i> Related Listings</h3>
+            <div class="products-grid" id="relatedGrid"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── LOGIN PAGE ────────────────────────────────────────────────────────── -->
+<div id="page-login" class="page hidden">
+    <div class="auth-container">
+        <div class="auth-side-img">
+            <img src="/images/hero-man.png" alt="Jiji ya Chogoria">
+            <div class="auth-side-overlay">
+                <div class="auth-side-logo"><i class="fas fa-store"></i></div>
+                <h2>Jiji ya Chogoria</h2>
+                <p>The #1 local marketplace in Chogoria, Tharaka-Nithi</p>
+                <div class="auth-side-stats">
+                    <span><i class="fas fa-tags"></i> 1000+ Listings</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Tharaka-Nithi</span>
+                </div>
+            </div>
+        </div>
+        <div class="auth-card">
+            <div class="auth-logo"><i class="fas fa-store"></i></div>
+            <h2>Welcome Back</h2>
+            <p class="auth-subtitle">Login to your Jiji ya Chogoria account</p>
+            <div id="googleBtnLogin" class="google-btn-wrap"></div>
+            <div class="auth-divider">or continue with email</div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="your@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="input-with-toggle">
+                        <input type="password" id="loginPassword" required placeholder="Your password" autocomplete="current-password">
+                        <button type="button" class="toggle-pw" onclick="togglePw('loginPassword',this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary full-width large" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <div class="forgot-link">
+                    <a href="#" onclick="showPage('forgot-password');return false;">Forgot your password?</a>
+                </div>
+            </form>
+            <div id="googleOneTapLogin"></div>
+            <p class="auth-switch">Don't have an account? <a href="#" onclick="showPage('register');return false;">Register here</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- ─── REGISTER PAGE ─────────────────────────────────────────────────────── -->
+<div id="page-register" class="page hidden">
+    <div class="auth-container">
+        <div class="auth-side-img">
+            <img src="/images/hero-man.png" alt="Jiji ya Chogoria">
+            <div class="auth-side-overlay">
+                <div class="auth-side-logo"><i class="fas fa-user-plus"></i></div>
+                <h2>Join Us Today</h2>
+                <p>Buy and sell locally with thousands of people in Chogoria and beyond</p>
+                <div class="auth-side-stats">
+                    <span><i class="fas fa-check-circle"></i> Free to Browse</span>
+                    <span><i class="fas fa-shield-alt"></i> Safe &amp; Secure</span>
+                </div>
+            </div>
+        </div>
+        <div class="auth-card">
+            <div class="auth-logo"><i class="fas fa-user-plus"></i></div>
+            <h2>Create Account</h2>
+            <p class="auth-subtitle">Join thousands of buyers and sellers in Chogoria</p>
+            <div id="googleBtnRegister" class="google-btn-wrap"></div>
+            <div class="auth-divider">or register with email</div>
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="regName" required placeholder="John Kamau" autocomplete="name">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="regEmail" required placeholder="your@email.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Phone</label>
+                        <input type="tel" id="regPhone" placeholder="0712345678" autocomplete="tel">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Location <span class="optional">(optional)</span></label>
+                    <select id="regLocation">
+                        <option value="">Select your area...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <div class="input-with-toggle">
+                        <input type="password" id="regPassword" required placeholder="Min. 6 characters" autocomplete="new-password">
+                        <button type="button" class="toggle-pw" onclick="togglePw('regPassword',this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary full-width large" id="regBtn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+            <p class="auth-switch">Already have an account? <a href="#" onclick="showPage('login');return false;">Login</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- ─── FORGOT PASSWORD ───────────────────────────────────────────────────── -->
+<div id="page-forgot-password" class="page hidden">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo"><i class="fas fa-key"></i></div>
+            <h2>Forgot Password?</h2>
+            <p class="auth-subtitle">Enter your email and we'll send a reset link to your inbox.</p>
+            <form id="forgotForm" onsubmit="handleForgotPassword(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="forgotEmail" required placeholder="your@email.com" autocomplete="email">
+                </div>
+                <button type="submit" class="btn-primary full-width large" id="forgotBtn">
+                    <i class="fas fa-paper-plane"></i> Send Reset Link
+                </button>
+            </form>
+            <p class="auth-switch"><a href="#" onclick="showPage('login');return false;"><i class="fas fa-arrow-left"></i> Back to Login</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- ─── RESET PASSWORD ────────────────────────────────────────────────────── -->
+<div id="page-reset-password" class="page hidden">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo"><i class="fas fa-lock-open"></i></div>
+            <h2>Set New Password</h2>
+            <p class="auth-subtitle">Choose a strong new password for your account.</p>
+            <form id="resetForm" onsubmit="handleResetPassword(event)">
+                <input type="hidden" id="resetToken">
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> New Password</label>
+                    <div class="input-with-toggle">
+                        <input type="password" id="resetPassword" required placeholder="Min. 6 characters" autocomplete="new-password">
+                        <button type="button" class="toggle-pw" onclick="togglePw('resetPassword',this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> Confirm Password</label>
+                    <div class="input-with-toggle">
+                        <input type="password" id="resetPasswordConfirm" required placeholder="Repeat your password" autocomplete="new-password">
+                        <button type="button" class="toggle-pw" onclick="togglePw('resetPasswordConfirm',this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary full-width large" id="resetBtn">
+                    <i class="fas fa-check-circle"></i> Update Password
+                </button>
+            </form>
+            <p class="auth-switch"><a href="#" onclick="showPage('login');return false;"><i class="fas fa-arrow-left"></i> Back to Login</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- ─── DASHBOARD ──────────────────────────────────────────────────────────── -->
+<div id="page-dashboard" class="page hidden">
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <h1>Dashboard</h1>
+                <p id="dashGreeting">Welcome back!</p>
+            </div>
+            <button class="btn-primary" onclick="showPage('post-ad')">
+                <i class="fas fa-plus"></i> Post New Ad
+            </button>
+        </div>
+        <div class="stats-grid" id="dashStats">
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-tags"></i></div>
+                <div class="stat-info"><span class="stat-num" id="dashActiveAds">-</span><span>Active Ads</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-eye"></i></div>
+                <div class="stat-info"><span class="stat-num" id="dashViews">-</span><span>Total Views</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-heart"></i></div>
+                <div class="stat-info"><span class="stat-num" id="dashSaved">-</span><span>Saved Items</span></div>
+            </div>
+            <div class="stat-card" onclick="showPage('payments')">
+                <div class="stat-icon" id="dashSubIcon"><i class="fas fa-crown"></i></div>
+                <div class="stat-info">
+                    <span class="stat-num" id="dashSubStatus">-</span>
+                    <span id="dashSubLabel">Membership</span>
+                </div>
+            </div>
+        </div>
+        <div class="subscription-banner hidden" id="subBanner">
+            <div class="sub-banner-content">
+                <i class="fas fa-crown"></i>
+                <div>
+                    <strong>Activate Membership to Post Listings</strong>
+                    <p>Pay <span data-posting-fee>KES 100</span>/month to start selling on Jiji ya Chogoria</p>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="showPage('payments')">Pay <span data-posting-fee>KES 100</span> Now</button>
+        </div>
+        <div class="dashboard-grid">
+            <div class="dashboard-col">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-tags"></i> My Recent Listings</h3>
+                        <a href="#" onclick="showPage('my-ads');return false;">View all</a>
+                    </div>
+                    <div id="dashRecentAds"><div class="empty-state small">Loading...</div></div>
+                </div>
+            </div>
+            <div class="dashboard-col">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-bell"></i> Notifications</h3>
+                        <a href="#" onclick="showPage('notifications');return false;">View all</a>
+                    </div>
+                    <div id="dashNotifications"><div class="empty-state small">Loading...</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── POST AD PAGE ───────────────────────────────────────────────────────── -->
+<div id="page-post-ad" class="page hidden">
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-plus-circle"></i> Post New Listing</h1>
+            <p>Fill in the details below. Your listing will be reviewed before going live.</p>
+        </div>
+        <div class="subscription-required hidden" id="postAdSubAlert">
+            <div class="sub-alert-inner">
+                <i class="fas fa-lock"></i>
+                <div>
+                    <h3>Membership Required</h3>
+                    <p>You need an active membership (<span data-posting-fee>KES 100</span>/month) to post listings.</p>
+                </div>
+                <button class="btn-primary" onclick="showPage('payments')">Get Membership</button>
+            </div>
+        </div>
+        <form id="postAdForm" onsubmit="handlePostAd(event)" class="post-form">
+            <div class="form-card">
+                <h3><i class="fas fa-info-circle"></i> Basic Details</h3>
+                <div class="form-group">
+                    <label>Listing Title *</label>
+                    <input type="text" id="adTitle" required placeholder="e.g. Samsung Galaxy A54 - Excellent Condition">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="adCategory" required>
+                            <option value="">Select category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Condition *</label>
+                        <select id="adCondition" required>
+                            <option value="used">Used</option>
+                            <option value="new">New</option>
+                            <option value="refurbished">Refurbished</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea id="adDescription" required rows="5" placeholder="Describe your item in detail..."></textarea>
+                </div>
+            </div>
+            <div class="form-card">
+                <h3><i class="fas fa-tags"></i> Pricing &amp; Location</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Price (KES) *</label>
+                        <input type="number" id="adPrice" required min="0" placeholder="e.g. 15000">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Location *</label>
+                        <div class="location-picker-row">
+                            <select id="adLocation" required>
+                                <option value="">Select location...</option>
+                                <option value="Chogoria Town">Chogoria Town</option>
+                            </select>
+                            <button type="button" class="btn-use-location" id="useLocationBtn" onclick="useMyLocation(setPostAdLocation)">
+                                <i class="fas fa-crosshairs"></i> My Location
+                            </button>
+                        </div>
+                        <input type="hidden" id="adLat">
+                        <input type="hidden" id="adLng">
+                    </div>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="adNegotiable">
+                    <label for="adNegotiable">Price is negotiable</label>
+                </div>
+            </div>
+            <div class="form-card">
+                <h3><i class="fas fa-phone-alt"></i> Contact Details</h3>
+                <div class="form-group">
+                    <label>WhatsApp Number <span class="optional">(buyers will message you here)</span></label>
+                    <div class="input-icon-wrap">
+                        <i class="fab fa-whatsapp" style="color:#25D366"></i>
+                        <input type="tel" id="adWhatsapp" placeholder="0712345678" maxlength="15">
+                    </div>
+                    <small class="form-hint">Leave blank to use your registered phone number.</small>
+                </div>
+            </div>
+            <div class="form-card">
+                <h3><i class="fas fa-images"></i> Photos <span style="color:var(--subtext2);font-weight:400;font-size:0.8rem;">(up to 6 photos — first = cover)</span></h3>
+                <div class="image-upload-area" id="imageUploadArea"
+                    onclick="document.getElementById('adImages').click()"
+                    ondragover="event.preventDefault();this.classList.add('drag-over')"
+                    ondragleave="this.classList.remove('drag-over')"
+                    ondrop="event.preventDefault();this.classList.remove('drag-over');handleImagePreview({files:event.dataTransfer.files})">
+                    <div class="upload-icon-wrap">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <p>Tap to upload or drag &amp; drop photos</p>
+                    <span>JPEG · PNG · WebP — Max 5MB each</span>
+                    <div class="upload-pills">
+                        <span class="upload-pill"><i class="fas fa-check" style="color:var(--success);margin-right:4px"></i>Free to upload</span>
+                        <span class="upload-pill"><i class="fas fa-shield-alt" style="color:var(--accent1);margin-right:4px"></i>Stored securely</span>
+                        <span class="upload-pill"><i class="fas fa-images" style="color:var(--accent1);margin-right:4px"></i>Up to 6 photos</span>
+                    </div>
+                    <input type="file" id="adImages" multiple accept="image/*" onchange="handleImagePreview(this)" style="display:none">
+                </div>
+                <div class="image-previews" id="imagePreviews"></div>
+                <p id="imageCount" style="font-size:0.78rem;color:var(--subtext2);margin-top:8px;"></p>
+            </div>
+            <button type="submit" class="btn-primary full-width large" id="postAdBtn">
+                <i class="fas fa-paper-plane"></i> Submit Listing
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ─── MY ADS PAGE ───────────────────────────────────────────────────────── -->
+<div id="page-my-ads" class="page hidden">
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-tags"></i> My Listings</h1>
+            <button class="btn-primary" onclick="showPage('post-ad')"><i class="fas fa-plus"></i> Post New</button>
+        </div>
+        <div class="filter-tabs">
+            <button class="tab active" onclick="filterMyAds('',this)">All</button>
+            <button class="tab" onclick="filterMyAds('active',this)">Active</button>
+            <button class="tab" onclick="filterMyAds('pending',this)">Pending</button>
+            <button class="tab" onclick="filterMyAds('rejected',this)">Rejected</button>
+            <button class="tab" onclick="filterMyAds('sold',this)">Sold</button>
+        </div>
+        <div id="myAdsGrid" class="my-ads-list"></div>
+    </div>
+</div>
+
+<!-- ─── FAVORITES ─────────────────────────────────────────────────────────── -->
+<div id="page-favorites" class="page hidden">
+    <div class="container">
+        <div class="page-header"><h1><i class="fas fa-heart"></i> Saved Listings</h1></div>
+        <div class="products-grid" id="favoritesGrid"></div>
+    </div>
+</div>
+
+<!-- ─── PAYMENTS / MEMBERSHIP ─────────────────────────────────────────────── -->
+<div id="page-payments" class="page hidden">
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-crown"></i> Membership</h1>
+            <p>Post your first 2 listings free — then pay <span data-posting-fee>KES 100</span>/month or KES 300 one-time</p>
+        </div>
+        <div class="free-posts-notice" id="freePostsNotice" style="display:none">
+            <i class="fas fa-gift"></i>
+            <div>
+                <strong>Your first 2 listings are FREE!</strong>
+                <p id="freePostsNoticeText">No payment needed to get started. Post your first 2 listings at no cost.</p>
+            </div>
+        </div>
+        <div class="payments-layout">
+            <div class="membership-card">
+                <div class="membership-status" id="membershipStatus"><div class="loading-spinner-sm"></div></div>
+                <div class="membership-plan">
+                    <div class="plan-header">
+                        <i class="fas fa-crown"></i>
+                        <h3>Seller Membership</h3>
+                        <div class="plan-price"><span data-posting-fee>KES 100</span> <span>/month</span></div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Post unlimited listings</li>
+                        <li><i class="fas fa-check"></i> Upload up to 6 photos per listing</li>
+                        <li><i class="fas fa-check"></i> 60-day listing duration</li>
+                        <li><i class="fas fa-check"></i> Reach local buyers in Chogoria</li>
+                        <li><i class="fas fa-check"></i> Priority listing review</li>
+                    </ul>
+                    <div class="pay-form" id="payForm">
+                        <label><i class="fas fa-mobile-alt"></i> M-Pesa Phone Number</label>
+                        <div class="phone-input-row">
+                            <input type="tel" id="mpesaPhone" placeholder="0712345678" maxlength="12" autocomplete="tel">
+                            <button class="btn-primary" onclick="initiatePayment()" id="payBtn">
+                                <i class="fas fa-mobile-alt"></i> Pay via M-Pesa
+                            </button>
+                        </div>
+                        <p class="pay-note"><i class="fas fa-info-circle"></i> You'll receive an M-Pesa prompt on your phone. Enter your PIN to complete.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="membership-card" style="margin-top:20px">
+                <div id="shopUnlockStatus"></div>
+                <div class="membership-plan">
+                    <div class="plan-header">
+                        <i class="fas fa-store-alt" style="color:var(--accent1)"></i>
+                        <h3>Shop Unlock — One-Time</h3>
+                        <div class="plan-price">KES 300 <span>one-time</span></div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> Post up to <strong>100 products</strong></li>
+                        <li><i class="fas fa-check"></i> Your own branded shop page</li>
+                        <li><i class="fas fa-check"></i> No monthly renewal — ever</li>
+                        <li><i class="fas fa-check"></i> Appears in Shops directory</li>
+                        <li><i class="fas fa-check"></i> Permanent access</li>
+                    </ul>
+                    <div class="pay-form">
+                        <label><i class="fas fa-mobile-alt"></i> M-Pesa Phone Number</label>
+                        <div class="phone-input-row">
+                            <input type="tel" id="shopUnlockPhone" placeholder="0712345678" maxlength="12" autocomplete="tel">
+                            <button class="btn-primary" onclick="initiateShopUnlockPayment()" id="shopUnlockBtn">
+                                <i class="fas fa-store-alt"></i> Unlock Shop
+                            </button>
+                        </div>
+                        <p class="pay-note"><i class="fas fa-info-circle"></i> One-time KES 300 via M-Pesa — unlocks your shop with 100 product slots, no monthly fees.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="payment-history-card">
+                <h3><i class="fas fa-history"></i> Payment History</h3>
+                <div id="paymentHistoryList"><div class="loading-spinner-sm"></div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── NOTIFICATIONS ──────────────────────────────────────────────────────── -->
+<div id="page-notifications" class="page hidden">
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-bell"></i> Notifications</h1>
+            <button class="btn-outline" onclick="markAllRead()">Mark all as read</button>
+        </div>
+        <div id="notificationsList"></div>
+    </div>
+</div>
+
+<!-- ─── PROFILE ───────────────────────────────────────────────────────────── -->
+<div id="page-profile" class="page hidden">
+    <div class="container">
+        <div class="page-header"><h1><i class="fas fa-user-cog"></i> Account Settings</h1></div>
+        <div class="profile-layout">
+            <div class="card" style="padding:24px">
+                <h3><i class="fas fa-user"></i> Personal Information</h3>
+                <form id="profileForm" onsubmit="handleProfileUpdate(event)">
+                    <div class="form-group"><label>Full Name</label><input type="text" id="profileName" placeholder="Full Name"></div>
+                    <div class="form-group"><label>Phone Number</label><input type="tel" id="profilePhone" placeholder="Phone Number"></div>
+                    <div class="form-group"><label>Location</label><select id="profileLocation"><option value="">Select your area...</option></select></div>
+                    <div class="form-group"><label>About Me</label><textarea id="profileBio" rows="3" placeholder="Tell buyers about yourself..."></textarea></div>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </form>
+            </div>
+            <div class="card" style="padding:24px">
+                <h3><i class="fas fa-lock"></i> Change Password</h3>
+                <form id="passwordForm" onsubmit="handlePasswordChange(event)">
+                    <div class="form-group"><label>Current Password</label><input type="password" id="currentPw" placeholder="Current password"></div>
+                    <div class="form-group"><label>New Password</label><input type="password" id="newPw" placeholder="New password (min. 6)"></div>
+                    <div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPw" placeholder="Confirm new password"></div>
+                    <button type="submit" class="btn-primary">Update Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── ADMIN PANEL ────────────────────────────────────────────────────────── -->
+<div id="page-admin" class="page hidden">
+    <div class="container">
+        <div class="page-header"><h1><i class="fas fa-shield-alt"></i> Admin Panel</h1></div>
+        <div class="admin-tabs">
+            <button class="tab active" onclick="adminTab('dashboard',this)"><i class="fas fa-chart-bar"></i> Dashboard</button>
+            <button class="tab" onclick="adminTab('listings',this)"><i class="fas fa-list"></i> Pending</button>
+            <button class="tab" onclick="adminTab('users',this)"><i class="fas fa-users"></i> Users</button>
+            <button class="tab" onclick="adminTab('payments-admin',this)"><i class="fas fa-money-bill"></i> Payments</button>
+            <button class="tab" onclick="adminTab('reports',this)"><i class="fas fa-flag"></i> Reports</button>
+            <button class="tab" onclick="adminTab('newsletter',this)"><i class="fas fa-newspaper"></i> Newsletter</button>
+            <button class="tab" onclick="adminTab('settings',this)"><i class="fas fa-cog"></i> Settings</button>
+        </div>
+        <div id="adminDashboard" class="admin-section"><div class="stats-grid" id="adminStats"></div></div>
+        <div id="adminListings" class="admin-section hidden"><div id="pendingListingsList"></div></div>
+        <div id="adminUsers" class="admin-section hidden">
+            <div class="search-bar-inline">
+                <input type="text" id="userSearchInput" placeholder="Search users...">
+                <button onclick="loadAdminUsers()"><i class="fas fa-search"></i></button>
+            </div>
+            <div id="adminUsersList"></div>
+        </div>
+        <div id="adminPayments" class="admin-section hidden"><div id="adminPaymentsList"></div></div>
+        <div id="adminReports" class="admin-section hidden"><div id="adminReportsList"></div></div>
+        <div id="adminNewsletter" class="admin-section hidden"><div id="adminNewsletterList"></div></div>
+        <div id="adminSettings" class="admin-section hidden">
+
+            <!-- Paid Posting Toggle -->
+            <div class="settings-card settings-card-highlight">
+                <div class="settings-card-top">
+                    <div>
+                        <h3><i class="fas fa-toggle-on"></i> Paid Posting</h3>
+                        <p class="settings-help">When enabled, sellers must pay the membership fee to post listings. When disabled, anyone can post for free.</p>
+                    </div>
+                    <div class="toggle-switch-wrap">
+                        <span id="paidPostingLabel" class="toggle-label">Loading...</span>
+                        <label class="toggle-switch" title="Toggle paid posting">
+                            <input type="checkbox" id="paidPostingToggle" onchange="togglePaidPosting(this)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Free Posts Setting -->
+            <div class="settings-card">
+                <h3><i class="fas fa-gift"></i> Free Listings Allowance</h3>
+                <p class="settings-help">Allow new sellers to post a certain number of listings for free before requiring membership. Set to 0 to disable free posts.</p>
+                <div class="settings-row">
+                    <div class="settings-row-label">
+                        <label>Free posts per user</label>
+                        <small>Number of free listings before payment is needed</small>
+                    </div>
+                    <input type="number" id="settingFreePostsPerUser" min="0" max="100" placeholder="e.g. 2">
+                    <button class="btn-primary" onclick="saveSetting('free_posts_per_user','settingFreePostsPerUser')">Save</button>
+                </div>
+            </div>
+
+            <!-- Fee Settings -->
+            <div class="settings-card">
+                <h3><i class="fas fa-money-bill-wave"></i> Posting Fee &amp; Subscription</h3>
+                <p class="settings-help">Control how much sellers pay to post listings. Currently <strong id="currentFeeDisplay">KES 100</strong>/month.</p>
+                <div class="settings-row">
+                    <div class="settings-row-label">
+                        <label>Posting Fee (KES/month)</label>
+                        <small>The M-Pesa amount sellers pay for membership</small>
+                    </div>
+                    <input type="number" id="settingPostingFee" min="1" placeholder="e.g. 100">
+                    <button class="btn-primary" onclick="saveSetting('posting_fee','settingPostingFee')">Save</button>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-row-label">
+                        <label>Membership Duration (days)</label>
+                        <small>How long a payment gives access</small>
+                    </div>
+                    <input type="number" id="settingSubDays" min="1" placeholder="e.g. 30">
+                    <button class="btn-primary" onclick="saveSetting('subscription_days','settingSubDays')">Save</button>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-row-label">
+                        <label>Minimum Boost Amount (KES)</label>
+                        <small>Minimum amount to feature a listing</small>
+                    </div>
+                    <input type="number" id="settingMinBoost" min="1" placeholder="e.g. 300">
+                    <button class="btn-primary" onclick="saveSetting('min_boost_amount','settingMinBoost')">Save</button>
+                </div>
+            </div>
+
+            <!-- Promote User -->
+            <!-- APK Upload -->
+            <div class="settings-card">
+                <h3><i class="fas fa-mobile-alt"></i> Android App (APK)</h3>
+                <p class="settings-help">Set the download URL for the Jiji ya Chogoria Android APK. Users will see a download button on the App page.</p>
+                <div id="currentApkInfo" class="apk-current hidden">
+                    <i class="fas fa-android"></i>
+                    <div>
+                        <div style="font-size:0.75rem;color:var(--subtext2)">Current APK URL</div>
+                        <a id="currentApkUrl" href="#" target="_blank" rel="noopener">View APK</a>
+                    </div>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-row-label">
+                        <label>APK Download URL</label>
+                        <small>Direct link to the .apk file (e.g. Google Drive, Dropbox)</small>
+                    </div>
+                    <input type="url" id="settingApkUrl" placeholder="https://drive.google.com/...">
+                    <button class="btn-primary" onclick="saveApkSetting()"><i class="fas fa-save"></i> Save</button>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-row-label">
+                        <label>App Version</label>
+                        <small>e.g. 1.0.0</small>
+                    </div>
+                    <input type="text" id="settingApkVersion" placeholder="1.0.0">
+                    <button class="btn-primary" onclick="saveSetting('apk_version','settingApkVersion')">Save</button>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-row-label">
+                        <label>Site Announcement</label>
+                        <small>Short banner message shown to all users (leave blank to hide)</small>
+                    </div>
+                    <input type="text" id="settingAnnouncement" placeholder="e.g. New categories added!">
+                    <button class="btn-primary" onclick="saveSetting('site_announcement','settingAnnouncement')">Save</button>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h3><i class="fas fa-user-shield"></i> Promote / Demote User</h3>
+                <p class="settings-help">Change a user's role using the phone number they registered with.</p>
+                <div class="settings-row">
+                    <div class="settings-row-label">
+                        <label>Phone Number</label>
+                        <small>Must match exactly as registered</small>
+                    </div>
+                    <input type="tel" id="promotePhone" placeholder="0712345678">
+                    <select id="promoteRole">
+                        <option value="admin">Admin</option>
+                        <option value="moderator">Moderator</option>
+                        <option value="user">User (remove role)</option>
+                    </select>
+                    <button class="btn-primary" onclick="promoteUser()"><i class="fas fa-user-check"></i> Apply</button>
+                </div>
+                <div id="promoteResult"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</main>
+
+<!-- ═══ MODALS ════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()"></div>
+
+<div class="modal hidden" id="reportModal">
+    <div class="modal-header">
+        <h3><i class="fas fa-flag"></i> Report Listing</h3>
+        <button onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Reason</label>
+            <select id="reportReason">
+                <option value="spam">Spam</option>
+                <option value="fraud">Fraud/Scam</option>
+                <option value="inappropriate">Inappropriate Content</option>
+                <option value="wrong_category">Wrong Category</option>
+                <option value="already_sold">Already Sold</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Details <span class="optional">(optional)</span></label>
+            <textarea id="reportDesc" rows="3" placeholder="Provide more details..."></textarea>
+        </div>
+        <button class="btn-primary full-width" onclick="submitReport()">Submit Report</button>
+    </div>
+</div>
+
+<div class="modal hidden" id="paymentCheckModal">
+    <div class="modal-body text-center">
+        <div class="payment-processing">
+            <div class="mpesa-logo"><i class="fas fa-mobile-alt"></i></div>
+            <h3 id="paymentModalTitle">M-Pesa Payment</h3>
+            <p id="paymentStatusMsg">Waiting for payment confirmation...</p>
+            <div class="loading-spinner-sm"></div>
+            <div id="paymentResult" class="hidden"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal hidden" id="contactModal">
+    <div class="modal-header">
+        <h3><i class="fas fa-phone"></i> Contact Seller</h3>
+        <button onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="contactModalBody"></div>
+</div>
+
+<div class="modal hidden" id="moderateModal">
+    <div class="modal-header">
+        <h3 id="moderateTitle">Moderate Listing</h3>
+        <button onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group" id="rejectReasonGroup" style="display:none">
+            <label>Rejection Reason</label>
+            <textarea id="rejectReason" rows="3" placeholder="Explain why this listing is rejected..."></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-outline" onclick="closeModal()">Cancel</button>
+            <button class="btn-primary" id="moderateConfirmBtn" onclick="confirmModeration()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Boost Modal -->
+<div class="modal hidden" id="boostModal">
+    <div class="modal-header">
+        <h3><i class="fas fa-rocket"></i> Boost Your Listing</h3>
+        <button onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+        <div class="boost-info-box">
+            <p><i class="fas fa-info-circle"></i> The more you pay, the higher your listing ranks on the Featured page. Minimum KES 300.</p>
+        </div>
+        <div class="boost-tiers">
+            <div class="boost-tier" onclick="selectBoostTier(300,this)">
+                <div class="bt-icon">🥉</div>
+                <strong>KES 300</strong>
+                <span>Basic Boost</span>
+            </div>
+            <div class="boost-tier" onclick="selectBoostTier(500,this)">
+                <div class="bt-icon">🥈</div>
+                <strong>KES 500</strong>
+                <span>Silver Boost</span>
+            </div>
+            <div class="boost-tier active" onclick="selectBoostTier(1000,this)">
+                <div class="bt-icon">🥇</div>
+                <strong>KES 1,000</strong>
+                <span>Gold — Top Rank</span>
+            </div>
+        </div>
+        <div class="form-group" style="margin-top:16px">
+            <label>Custom Amount (KES)</label>
+            <input type="number" id="boostAmount" value="1000" min="300" placeholder="Minimum KES 300">
+        </div>
+        <div class="form-group">
+            <label><i class="fas fa-mobile-alt"></i> M-Pesa Phone Number</label>
+            <input type="tel" id="boostPhone" placeholder="0712345678" maxlength="12">
+        </div>
+        <p class="pay-note"><i class="fas fa-info-circle"></i> You'll receive an M-Pesa prompt. Enter your PIN to boost.</p>
+        <div class="modal-actions">
+            <button class="btn-outline" onclick="closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="confirmBoost()">
+                <i class="fas fa-bolt"></i> Boost Now
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ─── SHOPS PAGE ─────────────────────────────────────────────────────────── -->
+<div id="page-shops" class="page hidden">
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-store-alt"></i> Local Shops</h1>
+            <p class="page-subtitle">Find shops and businesses in Chogoria</p>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:16px;">
+            <input type="text" id="shopSearchInput" placeholder="Search shops..." style="flex:1;min-width:200px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:var(--radius-pill);font-size:0.9rem;outline:none;" oninput="filterShops()">
+            <select id="shopCategoryFilter" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:var(--radius-pill);font-size:0.88rem;" onchange="filterShops()">
+                <option value="">All Categories</option>
+            </select>
+            <button class="btn-primary" onclick="showCreateShopModal()" id="createShopBtn" style="display:none">
+                <i class="fas fa-plus"></i> Create Shop
+            </button>
+        </div>
+        <div class="shops-grid" id="shopsGrid">
+            <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
+            <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── SHOP DETAIL PAGE ───────────────────────────────────────────────────── -->
+<div id="page-shop-detail" class="page hidden">
+    <div id="shopDetailContent"></div>
+</div>
+
+<!-- ─── MESSAGES PAGE (DM Inbox) ─────────────────────────────────────────── -->
+<div id="page-messages" class="page hidden">
+    <div class="container" style="max-width:900px">
+        <div class="page-header">
+            <h1><i class="fas fa-envelope"></i> Messages</h1>
+            <p class="page-subtitle">Private conversations with buyers and sellers</p>
+        </div>
+        <div class="dm-layout" id="dmLayout">
+            <!-- Inbox list -->
+            <div class="dm-inbox" id="dmInbox">
+                <div class="dm-inbox-header">
+                    <span>Conversations</span>
+                    <span class="dm-inbox-count" id="dmInboxCount"></span>
+                </div>
+                <div id="dmConversationList">
+                    <div class="empty-state small"><i class="fas fa-spinner fa-spin"></i><p>Loading...</p></div>
+                </div>
+            </div>
+            <!-- Thread panel -->
+            <div class="dm-thread hidden" id="dmThread">
+                <div class="dm-thread-header" id="dmThreadHeader">
+                    <button class="dm-back-btn" onclick="showDMInbox()"><i class="fas fa-arrow-left"></i></button>
+                    <div class="dm-thread-info" id="dmThreadInfo">
+                        <div class="dm-thread-name" id="dmThreadName"></div>
+                        <div class="dm-thread-sub" id="dmThreadSub"></div>
+                    </div>
+                </div>
+                <div class="dm-messages" id="dmMessages">
+                    <div class="empty-state small"><i class="fas fa-spinner fa-spin"></i><p>Loading messages...</p></div>
+                </div>
+                <div class="dm-input-row">
+                    <input type="text" id="dmInput" placeholder="Type a message..." maxlength="1000"
+                        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendDMMessage();}">
+                    <button class="btn-primary" onclick="sendDMMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Empty state when no conversation selected -->
+            <div class="dm-empty-thread" id="dmEmptyThread">
+                <i class="fas fa-comments"></i>
+                <p>Select a conversation to start messaging</p>
+                <small>Only signed-in users can chat</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── COMMUNITY CHAT PAGE ───────────────────────────────────────────────── -->
+<div id="page-chat" class="page hidden">
+    <div class="container" style="max-width:760px">
+        <div class="page-header">
+            <h1><i class="fas fa-comments"></i> Community Chat</h1>
+            <p class="page-subtitle">Public market square — talk to buyers and sellers in Chogoria</p>
+        </div>
+        <div style="font-size:0.8rem;color:var(--subtext2);background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;display:flex;gap:8px;align-items:center;">
+            <i class="fas fa-info-circle" style="color:var(--accent1)"></i>
+            This is a public chat. Be respectful. No selling here — use listings for that.
+        </div>
+        <div id="chatMessages" class="chat-messages">
+            <div class="empty-state small"><i class="fas fa-spinner fa-spin"></i><p>Loading messages...</p></div>
+        </div>
+        <div id="chatInputArea">
+            <div class="chat-input-row" id="chatInputRow">
+                <input type="text" id="chatInput" placeholder="Type a message... (Enter to send)" maxlength="500"
+                    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}">
+                <button class="btn-primary" onclick="sendChatMessage()" title="Send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div class="chat-login-prompt hidden" id="chatLoginPrompt">
+                <i class="fas fa-lock"></i> <a href="#" onclick="showPage('login')">Login</a> to join the conversation
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── DOWNLOAD APP PAGE ─────────────────────────────────────────────────── -->
+<div id="page-download-app" class="page hidden">
+    <div class="download-hero">
+        <i class="fas fa-mobile-alt" style="font-size:3.5rem;color:var(--accent1);display:block;margin-bottom:16px;"></i>
+        <h1>Jiji ya Chogoria <span class="grad-text">App</span></h1>
+        <p>Download the Android app for the best marketplace experience — fast, offline-ready, and built for Kenya.</p>
+        <div id="apkDownloadSection">
+            <div class="playstore-coming-wrap">
+                <div class="playstore-coming-badge">
+                    <i class="fab fa-google-play"></i>
+                    <div>
+                        <div style="font-size:0.65rem;opacity:0.75;text-transform:uppercase;letter-spacing:0.5px;">Coming Soon on</div>
+                        <div style="font-size:1.05rem;font-weight:700;">Google Play</div>
+                    </div>
+                </div>
+                <span style="background:rgba(255,107,53,0.15);color:var(--accent1);font-size:0.72rem;font-weight:700;padding:4px 14px;border-radius:50px;letter-spacing:0.5px;text-transform:uppercase;">Coming Soon</span>
+            </div>
+            <div style="margin-top:16px;">
+                <a id="apkDownloadBtn" href="#" class="apk-download-btn" download style="display:none">
+                    <i class="fab fa-android"></i> Download APK
+                    <span id="apkVersionLabel" style="font-size:0.8rem;opacity:0.85;margin-left:4px;"></span>
+                </a>
+                <p id="apkComingSoon" style="color:var(--subtext);font-size:0.88rem;margin-top:12px;">
+                    <i class="fas fa-info-circle" style="color:var(--accent1);margin-right:6px;"></i>Direct APK download available soon — check back!
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="padding-bottom:48px">
+        <h2 style="text-align:center;margin-bottom:8px;">How to Install</h2>
+        <p style="text-align:center;color:var(--subtext);margin-bottom:28px;font-size:0.88rem;">Android only. Takes 2 minutes.</p>
+        <div class="install-steps">
+            <div class="install-step">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                    <h4>Download the APK</h4>
+                    <p>Tap the download button above. Your browser will save the file to your Downloads folder.</p>
+                </div>
+            </div>
+            <div class="install-step">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                    <h4>Allow Unknown Sources</h4>
+                    <p>Go to <strong>Settings → Security → Install Unknown Apps</strong> and enable it for your browser or file manager.</p>
+                </div>
+            </div>
+            <div class="install-step">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                    <h4>Open the APK File</h4>
+                    <p>Open your Downloads folder and tap the <strong>JijiChogoria.apk</strong> file to begin installation.</p>
+                </div>
+            </div>
+            <div class="install-step">
+                <div class="step-num">4</div>
+                <div class="step-content">
+                    <h4>Tap Install</h4>
+                    <p>Follow the on-screen prompts and tap <strong>Install</strong>. The app will appear on your home screen.</p>
+                </div>
+            </div>
+            <div class="install-step">
+                <div class="step-num">5</div>
+                <div class="step-content">
+                    <h4>Open &amp; Login</h4>
+                    <p>Launch Jiji ya Chogoria, log in or create your account, and start buying and selling!</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-top:32px;text-align:center;">
+            <i class="fas fa-shield-alt" style="color:var(--success);font-size:1.5rem;margin-bottom:8px;display:block;"></i>
+            <strong>Safe &amp; Verified</strong>
+            <p style="color:var(--subtext);font-size:0.84rem;margin-top:6px;margin-bottom:0;">This APK is the official Jiji ya Chogoria app, built and distributed by us. No third-party stores needed.</p>
+        </div>
+
+        <div style="text-align:center;margin-top:32px;">
+            <p style="color:var(--subtext);font-size:0.85rem;">Prefer the browser? <a href="#" onclick="showPage('home');return false;" style="color:var(--accent1)">Use the web version</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ NEWSLETTER ════════════════════════════════════════════════════════════ -->
+<section class="newsletter-section-wrap">
+    <div class="container">
+        <div class="newsletter-inner">
+            <div class="newsletter-text">
+                <h2><i class="fas fa-envelope-open-text" style="color:var(--accent1)"></i> Stay in the Loop</h2>
+                <p>Get updates on new listings, market deals, and news from Chogoria — straight to your inbox.</p>
+            </div>
+            <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                <input type="text" id="newsletterName" placeholder="Your name (optional)" autocomplete="name">
+                <input type="email" id="newsletterEmail" placeholder="your@email.com" required autocomplete="email">
+                <button type="submit" class="btn-primary" id="newsletterBtn">
+                    <i class="fas fa-paper-plane"></i> Subscribe
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════════════════════ -->
+<footer class="footer" id="siteFooter">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="footer-logo"><i class="fas fa-store"></i> Jiji ya Chogoria</div>
+                <p>Your trusted local marketplace in Chogoria, Tharaka-Nithi County. Buy and sell locally — fast, free to browse.</p>
+                <div class="footer-socials">
+                    <a href="https://wa.me/254700000000" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+                <div class="footer-app-badges">
+                    <a href="#" onclick="showPage('download-app');return false;" class="footer-app-badge">
+                        <i class="fab fa-google-play"></i> Get on Google Play
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h4>About Us</h4>
+                <a href="#" onclick="showPage('home');return false;">About Jiji ya Chogoria</a>
+                <a href="#">Terms &amp; Conditions</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Safety Tips</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+            <div>
+                <h4>Support</h4>
+                <a href="mailto:smontana025@gmail.com"><i class="fas fa-envelope" style="color:var(--accent1);width:16px"></i> smontana025@gmail.com</a>
+                <a href="#" onclick="showPage('chat');return false;"><i class="fas fa-comments" style="color:var(--accent1);width:16px"></i> Community Chat</a>
+                <a href="#"><i class="fas fa-question-circle" style="color:var(--accent1);width:16px"></i> FAQ</a>
+                <a href="#"><i class="fas fa-shield-alt" style="color:var(--accent1);width:16px"></i> Safety Tips</a>
+                <a href="#" onclick="showPage('download-app');return false;"><i class="fas fa-mobile-alt" style="color:var(--accent1);width:16px"></i> Download App</a>
+            </div>
+            <div>
+                <h4>Quick Links</h4>
+                <a href="#" onclick="showPage('listings');return false;">Browse Listings</a>
+                <a href="#" onclick="showPage('featured');return false;"><i class="fas fa-fire" style="color:var(--accent1);margin-right:4px;font-size:0.8rem"></i>Featured</a>
+                <a href="#" onclick="showPage('shops');return false;">Local Shops</a>
+                <a href="#" onclick="handlePostAdMobile();return false;">Post an Ad</a>
+                <a href="#" onclick="showPage('payments');return false;"><i class="fas fa-crown" style="color:var(--accent1);margin-right:4px;font-size:0.8rem"></i>Membership</a>
+            </div>
+            <div>
+                <h4>Categories</h4>
+                <div id="footerCategories"></div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Jiji ya Chogoria. All rights reserved. &nbsp;·&nbsp; Chogoria, Tharaka-Nithi County, Kenya</p>
+            <div class="footer-bottom-links">
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+                <a href="#">Safety</a>
+                <a href="mailto:smontana025@gmail.com">Contact</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Create Shop Modal -->
+<div class="modal hidden" id="createShopModal">
+    <div class="modal-header">
+        <h3><i class="fas fa-store-alt"></i> Create Your Shop</h3>
+        <button onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+        <form id="createShopForm" onsubmit="handleCreateShop(event)">
+            <div class="shop-form-grid">
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Shop Name <span style="color:var(--error)">*</span></label>
+                    <input type="text" id="shopName" required placeholder="e.g. Kamau Hardware Store" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="shopCategory"></select>
+                </div>
+                <div class="form-group">
+                    <label>WhatsApp Number</label>
+                    <input type="tel" id="shopWhatsapp" placeholder="0712345678">
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Location / Address</label>
+                    <input type="text" id="shopLocation" placeholder="e.g. Chogoria Town, next to Market">
+                </div>
+                <div class="form-group">
+                    <label>Opening Hours</label>
+                    <input type="text" id="shopHours" placeholder="e.g. Mon-Sat 8am-6pm">
+                </div>
+                <div class="form-group">
+                    <label>Google Maps Link <span class="optional">(optional)</span></label>
+                    <input type="url" id="shopMapsUrl" placeholder="https://maps.google.com/...">
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Description</label>
+                    <textarea id="shopDescription" rows="3" placeholder="Tell buyers about your shop, what you sell, etc." maxlength="500"></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-outline" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-primary" id="createShopBtn2">
+                    <i class="fas fa-store-alt"></i> Create Shop
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/app.js"></script>
+
+<!-- ═══ MOBILE MENU FALLBACK (works even without app.js) ═══════════════════ -->
+<script>
+(function () {
+    var menu    = document.getElementById('mobileMenu');
+    var overlay = document.getElementById('menuOverlay');
+    var hamb    = document.getElementById('hamburger');
+    if (!menu || !overlay || !hamb) return;
+
+    function lockScroll(lock) {
+        document.body.style.overflow      = lock ? 'hidden' : '';
+        document.body.style.touchAction   = lock ? 'none'   : '';
+    }
+
+    function openMenu() {
+        menu.classList.add('menu-open');
+        overlay.classList.add('active');
+        hamb.classList.add('open');
+        hamb.setAttribute('aria-expanded', 'true');
+        lockScroll(true);
+    }
+    function closeMenu() {
+        menu.classList.remove('menu-open');
+        overlay.classList.remove('active');
+        hamb.classList.remove('open');
+        hamb.setAttribute('aria-expanded', 'false');
+        lockScroll(false);
+    }
+    function toggleMenu() {
+        if (menu.classList.contains('menu-open')) closeMenu(); else openMenu();
+    }
+
+    // Expose globally (overrides anything app.js may not have wired correctly)
+    window.toggleMobileMenu = toggleMenu;
+    window.openMobileMenu   = openMenu;
+    window.closeMobileMenu  = closeMenu;
+
+    // Auto-close on link tap inside menu (in case onclick handler is missing)
+    menu.addEventListener('click', function (e) {
+        var a = e.target.closest('a');
+        if (a) setTimeout(closeMenu, 10);
+    });
+
+    // Close on ESC
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && menu.classList.contains('menu-open')) closeMenu();
+    });
+
+    // Auto-close if viewport grows past mobile breakpoint
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 900 && menu.classList.contains('menu-open')) closeMenu();
+    });
+})();
+</script>
+</body>
+</html>

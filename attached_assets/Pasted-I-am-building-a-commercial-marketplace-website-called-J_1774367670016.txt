@@ -1,0 +1,86 @@
+I am building a commercial marketplace website called "Jiji ya Chogoria" using Node.js, Supabase (PostgreSQL), and a frontend currently in HTML (planning to modernize later).
+
+The platform allows users to register and post products for sale. I want to improve it into a production-ready system with paid membership using M-Pesa STK Push (KES 100/month required before posting or uploading product images).
+
+Current features:
+
+* User registration and login
+* Product posting
+* Supabase database
+* Basic UI
+
+Already implemented:
+
+* M-Pesa STK Push initiation (Daraja API)
+
+I want you to act as a senior full-stack engineer and product designer. Analyze and improve the system.
+
+Please provide:
+
+1. **Architecture Improvements**
+
+   * Best Node.js backend structure (controllers, services, routes)
+   * Secure integration with Supabase
+   * Scalable design for a marketplace
+
+2. **M-Pesa Payment System Enhancements**
+
+   * Proper STK Push flow with callback handling
+   * Payment verification logic
+   * Subscription lifecycle (activation, expiry, renewal)
+   * Prevent users from posting without active membership
+
+3. **Essential Missing Features (Prioritized: Critical → Nice-to-have)**
+   Include:
+
+   * Authentication improvements (JWT, sessions, roles)
+   * User dashboard
+   * Admin panel
+   * Product moderation
+   * Payment history
+   * Notifications (SMS/email)
+   * Fraud/spam prevention
+
+4. **Security Improvements**
+
+   * Input validation
+   * API protection
+   * Rate limiting
+   * Secure payment handling
+
+5. **Database Design**
+   Suggest optimized tables for:
+
+   * Users
+   * Products
+   * Subscriptions
+   * Payments
+   * Admin logs
+
+6. **UI/UX Improvements**
+
+   * How to make it feel like a modern marketplace
+   * Mobile-first design suggestions
+   * Conversion optimization (getting users to pay)
+
+7. **Performance & Scaling**
+
+   * Caching strategies
+   * Handling many users
+   * Image storage optimization
+
+8. **Code Examples**
+
+   * Clean Node.js examples for:
+
+     * STK Push
+     * Callback handling
+     * Membership check middleware
+
+9. **Deployment Suggestions**
+
+   * Hosting (backend + frontend)
+   * Environment variables
+   * Domain & HTTPS setup
+
+Be practical, structured, and prioritize real-world production readiness over theory.

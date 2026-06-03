@@ -1,0 +1,467 @@
+Jijiyachogoria 
+
+MGPYxV1FsZKn -megapay api key 
+
+-HLrdvzhjvgWkGg5lgn0QgtzegQ  - clodinary api secret
+
+814894429245337 cloudinary api key
+
+dvqp52hzv - cloudinary api key 
+
+
+
+DATABASE_URL='postgresql://neondb_owner:npg_pcRoH7BZ1WjX@ep-hidden-tooth-abc75aca-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+
+
+
+Google auth client id = 478298508837-vespi93fffracolnf26ergu0vdb0i3je.apps.googleusercontent.comBuild a modern fullstack mobile-first marketplace web app called “Jijiya Chogoria” for a small Kenyan market town.
+
+
+
+The app should feel extremely fast, modern, clean, sleek, and optimized for low-end Android phones and slow mobile networks.
+
+
+
+STYLE & UI:
+
+
+
+* Orange and black theme
+
+* Modern Pinterest-style masonry layout
+
+* Smooth animations but lightweight
+
+* Mobile-first responsive design
+
+* Clean cards with rounded corners
+
+* Use modern typography
+
+* Minimal clutter
+
+* Fast image loading
+
+* Skeleton loaders while content loads
+
+* Infinite scrolling for products
+
+* Lazy loading images
+
+* Dark elegant UI
+
+* Professional production-grade appearance
+
+
+
+TECH STACK:
+
+
+
+* Next.js 15 App Router
+
+* TypeScript
+
+* Tailwind CSS
+
+* Shadcn UI
+
+* Prisma ORM
+
+* Neon PostgreSQL database
+
+* Cloudinary for image uploads
+
+* Auth.js (NextAuth) for authentication
+
+* Google Sign-In support
+
+* Deployable on Vercel
+
+* Use .env variables everywhere
+
+* SEO optimized
+
+* Server-side rendering where appropriate
+
+* Optimized for serverless architecture
+
+* Use API routes/server actions instead of Express
+
+
+
+MAIN FEATURES:
+
+PUBLIC USERS:
+
+
+
+* Browse products without login
+
+* Search products
+
+* Filter by categories
+
+* View business profiles
+
+* View seller contact info
+
+* View seller WhatsApp button
+
+* View seller location
+
+* SEO-friendly product pages
+
+* Product image galleries
+
+* Trending products section
+
+* Featured businesses section
+
+
+
+SELLERS:
+
+
+
+* Create account with Google Sign-In
+
+* Upload products
+
+* Add multiple product images
+
+* Add product title
+
+* Add description
+
+* Add price
+
+* Add business/shop name
+
+* Add location
+
+* Add phone number
+
+* Add WhatsApp number
+
+* Manage own products
+
+* Edit/delete listings
+
+* View listing performance
+
+
+
+ADMIN PANEL:
+
+Create a secure admin dashboard.
+
+
+
+Admin can:
+
+
+
+* View all users
+
+* View all products
+
+* Delete products
+
+* Suspend users
+
+* Manage categories
+
+* Enable/disable paid posting
+
+* Set posting price dynamically
+
+* View payments
+
+* Feature products
+
+* Feature businesses
+
+* Manage homepage banners
+
+* Add/remove admins
+
+* View traffic analytics
+
+* Configure Cloudinary credentials
+
+* Configure alternate database connections
+
+* Manage SEO settings
+
+
+
+PAYMENTS:
+
+Integrate MegaPay API for:
+
+
+
+* Paid product posting
+
+* STK Push payments
+
+* Transaction verification
+
+* Webhook handling
+
+* Payment logs
+
+
+
+Create what should the .env contain  payment flow:
+
+
+
+* Seller submits product
+
+* If paid posting enabled:
+
+
+
+  * Trigger STK Push
+
+  * Wait for successful webhook
+
+  * Publish product after payment success
+
+* If disabled:
+
+
+
+  * Publish instantly
+
+
+
+DATABASE DESIGN:
+
+Use Prisma schema with:
+
+
+
+* Users
+
+* Products
+
+* Categories
+
+* ProductImages
+
+* Payments
+
+* AdminSettings
+
+* FeaturedProducts
+
+* Businesses
+
+* Locations
+
+* Analytics
+
+
+
+PERFORMANCE:
+
+Optimize aggressively:
+
+
+
+* Use Next.js image optimization
+
+* Cloudinary transformations
+
+* Pagination
+
+* Caching
+
+* Lazy loading
+
+* Server components
+
+* Edge-friendly architecture
+
+* Minimize bundle size
+
+* Fast Lighthouse scores
+
+* Good SEO scores
+
+
+
+SEO:
+
+
+
+* Dynamic metadata
+
+* Sitemap generation
+
+* robots.txt
+
+* OpenGraph tags
+
+* Structured product schema
+
+* SEO-friendly URLs
+
+* Server-rendered product pages
+
+
+
+PRODUCT CATEGORIES:
+
+Include:
+
+
+
+* Mtumba
+
+* Electronics
+
+* Phones
+
+* Furniture
+
+* Hardware
+
+* Fashion
+
+* Beauty
+
+* Farm products
+
+* Services
+
+* Rentals
+
+* Vehicles
+
+* Grocery
+
+* Restaurants
+
+* Construction
+
+* Home appliances
+
+* Jobs
+
+* Other
+
+
+
+HOMEPAGE:
+
+
+
+* Hero section
+
+* Trending products
+
+* Categories grid
+
+* Featured businesses
+
+* Recently added products
+
+* Search bar
+
+* Mobile bottom navigation
+
+
+
+MOBILE EXPERIENCE:
+
+The app must feel like a native mobile app:
+
+
+
+* Sticky navigation
+
+* Smooth scrolling
+
+* Fast transitions
+
+* Optimized touch targets
+
+* Bottom navigation bar
+
+* Floating action button for posting products
+
+
+
+SECURITY:
+
+
+
+* Secure authentication
+
+* Protected admin routes
+
+* Input validation
+
+* Rate limiting
+
+* Secure API routes
+
+* Environment variable protection
+
+* Prevent spam uploads
+
+
+
+VERCEL:
+
+Ensure the app is fully deployable on Vercel free tier.
+
+Optimize for serverless functions and edge compatibility.
+
+
+
+DELIVER:
+
+
+
+* Full project structure
+
+* Prisma schema
+
+* API routes
+
+* Authentication setup
+
+* Admin dashboard
+
+* Product upload flow
+
+* MegaPay integration example
+
+* Cloudinary upload implementation
+
+* SEO setup
+
+* Responsive UI
+
+* Production-ready code
+
+* Clean architecture
+
+* Setup instructions
+
+* .env.example file
+
+
+
+IMPORTANT:
+
+Code should be modular, scalable, and production-ready.
+
+Do not generate placeholder junk.
+
+Generate realistic architecture and usable code.

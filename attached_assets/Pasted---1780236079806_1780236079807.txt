@@ -1,0 +1,237 @@
+                                                                                                                                                                                                                                         
+┌──(ghost㉿kali)-[~/projects/jiji-yazip-main]
+└─$ npm run dev
+
+> jiji-ya-chogoria@1.0.0 dev
+> node server.js
+
+◇ injected env (16) from .env // tip: ⌘ override existing { override: true }
+
+🚀  Jiji ya Chogoria  — port 5000  [development]
+    MegaPay   : ✓
+    Cloudinary: ✓
+    Google    : ✗ not configured
+(node:640089) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+DB query: SELECT u.*, s.status as subscription_status, s.expires_at as (1200ms)
+POST /api/auth/login 401 1892.329 ms - 56
+DB query: SELECT c.*, COUNT(p.id) FILTER (WHERE p.status = 'active') a (170ms)
+GET /api/products/categories 200 179.898 ms - 3931
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (155ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (157ms)
+GET /api/products?limit=8&sort=popular 200 322.189 ms - 84
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (1127ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (157ms)
+GET /api/products?limit=8&sort=newest 200 1292.824 ms - 84
+DB query: SELECT u.*, s.status as subscription_status, s.expires_at as (155ms)
+DB query: UPDATE users SET last_login = NOW() WHERE id = $1 (160ms)
+POST /api/auth/login 200 785.984 ms - 498
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (157ms)
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (156ms)
+DB query: SELECT p.id, p.title, p.price, p.images, p.location, p.statu (157ms)
+GET /api/products/favorites 200 316.741 ms - 31
+DB query: SELECT u.id, u.full_name, u.email, u.phone, u.role, u.avatar (161ms)
+GET /api/auth/me 200 328.740 ms - 488
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (1112ms)
+DB query: SELECT * FROM notifications WHERE user_id = $1 ORDER BY crea (152ms)
+DB query: SELECT COUNT(*) FROM notifications WHERE user_id = $1 AND is (155ms)
+GET /api/notifications 200 1424.117 ms - 52
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (152ms)
+DB query: SELECT p.*, c.name as category_name FROM products p
+         (157ms)
+GET /api/products/my 200 311.273 ms - 30
+DB query: SELECT value FROM app_settings WHERE key = $1 (154ms)
+DB query: SELECT value FROM app_settings WHERE key = $1 (156ms)
+DB query: SELECT value FROM app_settings WHERE key = $1 (155ms)
+GET /api/settings/public 200 157.695 ms - 93
+GET /api/settings/public 304 2.079 ms - -
+DB query: SELECT cm.id, cm.message, cm.created_at,
+                    (153ms)
+GET /api/chat 200 157.052 ms - 30
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (161ms)
+DB query: SELECT s.*, u.full_name as owner_name, u.phone as owner_phon (157ms)
+DB query: SELECT COUNT(*) FROM shops s LEFT JOIN categories c ON c.id  (153ms)
+GET /api/shops 200 480.958 ms - 82
+DB query: SELECT c.*, COUNT(p.id) FILTER (WHERE p.status = 'active') a (162ms)
+GET /api/products/categories 304 167.980 ms - -
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (160ms)
+DB query: SELECT p.id, p.title, p.price, p.condition, p.location, p.im (157ms)
+GET /api/products/featured 200 322.124 ms - 41
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (157ms)
+DB query: SELECT p.id, p.title, p.price, p.condition, p.location, p.im (153ms)
+GET /api/products/featured 304 313.144 ms - -
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (151ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (157ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (159ms)
+GET /api/products?page=1&limit=20 200 474.635 ms - 85
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (163ms)
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (164ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (164ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (168ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (155ms)
+GET /api/products?limit=8&sort=newest 304 489.025 ms - -
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (164ms)
+GET /api/products?limit=8&sort=popular 304 503.798 ms - -
+GET /admin 304 3.712 ms - -
+GET /css/style.css 304 3.873 ms - -
+GET /images/hero-man.png 304 3.831 ms - -
+GET /js/app.js 304 7.767 ms - -
+GET /images/hero-woman.png 304 12.343 ms - -
+GET /api/settings/public 304 6.058 ms - -
+GET /favicon.svg 304 0.481 ms - -
+GET /favicon.svg 304 2.231 ms - -
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (158ms)
+DB query: SELECT u.id, u.full_name, u.email, u.phone, u.role, u.avatar (159ms)
+GET /api/auth/me 304 326.773 ms - -
+GET /api/auth/google-client-id 304 4.643 ms - -
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (163ms)
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (160ms)
+DB query: SELECT * FROM notifications WHERE user_id = $1 ORDER BY crea (161ms)
+DB query: SELECT COUNT(*) as total,
+                   COUNT(*) FILTER (155ms)
+DB query: SELECT COUNT(*) as total,
+                   COUNT(*) FILTER (156ms)
+DB query: SELECT COUNT(*) FROM notifications WHERE user_id = $1 AND is (156ms)
+GET /api/notifications 304 487.484 ms - -
+DB query: SELECT COUNT(*) as total, COUNT(*) FILTER (WHERE status = 'p (1113ms)
+DB query: SELECT COUNT(*) as total,
+                   SUM(amount) FIL (1113ms)
+GET /api/admin/dashboard 200 1285.114 ms - 266
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (159ms)
+DB query: SELECT COUNT(*) as total,
+                   COUNT(*) FILTER (154ms)
+DB query: SELECT COUNT(*) as total,
+                   SUM(amount) FIL (155ms)
+DB query: SELECT COUNT(*) as total,
+                   COUNT(*) FILTER (155ms)
+DB query: SELECT COUNT(*) as total, COUNT(*) FILTER (WHERE status = 'p (155ms)
+GET /api/admin/dashboard 304 317.877 ms - -
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (155ms)
+DB query: SELECT COUNT(*) as total,
+                   COUNT(*) FILTER (153ms)
+DB query: SELECT COUNT(*) as total, COUNT(*) FILTER (WHERE status = 'p (160ms)
+DB query: SELECT COUNT(*) as total,
+                   COUNT(*) FILTER (164ms)
+DB query: SELECT COUNT(*) as total,
+                   SUM(amount) FIL (165ms)
+GET /api/admin/dashboard 304 322.432 ms - -
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (152ms)
+DB query: SELECT p.*, c.name as category_name, u.full_name as seller_n (160ms)
+DB query: SELECT COUNT(*) FROM products WHERE status = 'pending' (154ms)
+GET /api/admin/products/pending 200 469.278 ms - 85
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (155ms)
+DB query: SELECT u.id, u.full_name, u.email, u.phone, u.role, u.is_act (154ms)
+DB query: SELECT COUNT(*) FROM users u  (154ms)
+GET /api/admin/users?search= 200 470.859 ms - 730
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (156ms)
+DB query: SELECT pay.*, u.full_name, u.email, u.phone
+             FRO (156ms)
+DB query: SELECT COUNT(*), SUM(amount) FILTER (WHERE status = 'complet (154ms)
+GET /api/admin/payments 200 471.230 ms - 114
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (152ms)
+DB query: SELECT u.id, u.full_name, u.email, u.phone, u.role, u.is_act (154ms)
+DB query: SELECT COUNT(*) FROM users u  (154ms)
+GET /api/admin/users?search= 304 463.237 ms - -
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (154ms)
+DB query: SELECT pay.*, u.full_name, u.email, u.phone
+             FRO (153ms)
+DB query: SELECT COUNT(*), SUM(amount) FILTER (WHERE status = 'complet (160ms)
+GET /api/admin/payments 304 470.619 ms - -
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (152ms)
+DB query: SELECT r.*, u.full_name as reporter_name, p.title as product (151ms)
+GET /api/admin/reports 200 307.563 ms - 29
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (159ms)
+DB query: SELECT key, value, description, updated_at FROM app_settings (166ms)
+GET /api/admin/settings 200 328.723 ms - 1161
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (157ms)
+DB query: SELECT key, value, description, updated_at FROM app_settings (159ms)
+GET /api/admin/settings 304 318.647 ms - -
+DB query: SELECT c.*, COUNT(p.id) FILTER (WHERE p.status = 'active') a (159ms)
+GET /api/products/categories 304 164.164 ms - -
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (154ms)
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (158ms)
+DB query: SELECT c.*, COUNT(p.id) FILTER (WHERE p.status = 'active') a (311ms)
+GET /api/products/categories 304 324.078 ms - -
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (154ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (155ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (151ms)
+GET /api/products?limit=8&sort=popular 304 489.798 ms - -
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (157ms)
+GET /api/products?limit=8&sort=newest 304 494.283 ms - -
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (156ms)
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (155ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (158ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (157ms)
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (158ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (156ms)
+GET /api/products?limit=8&sort=popular 304 481.258 ms - -
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (160ms)
+GET /api/products?limit=8&sort=newest 304 485.747 ms - -
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (155ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (161ms)
+GET /api/products?page=1&limit=20 304 480.707 ms - -
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (150ms)
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (157ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (157ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (158ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (156ms)
+GET /api/products?limit=8&sort=popular 304 468.493 ms - -
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (159ms)
+GET /api/products?limit=8&sort=newest 304 479.251 ms - -
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (154ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (165ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (171ms)
+GET /api/products?page=1&limit=20 304 494.510 ms - -
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (160ms)
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (164ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (154ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (158ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (159ms)
+GET /api/products?limit=8&sort=newest 304 483.941 ms - -
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (158ms)
+GET /api/products?limit=8&sort=popular 304 489.751 ms - -
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (154ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (156ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (154ms)
+GET /api/products?page=1&limit=20 304 471.512 ms - -
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (154ms)
+DB query: SELECT id, full_name, email, phone, role FROM users WHERE id (155ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (154ms)
+DB query: SELECT p.id, p.title, p.price, p.negotiable, p.condition, p. (156ms)
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (155ms)
+GET /api/products?limit=8&sort=popular 304 479.043 ms - -
+DB query: SELECT COUNT(*) FROM products p LEFT JOIN categories c ON c. (155ms)
+GET /api/products?limit=8&sort=newest 304 483.033 ms - -
+DB query: SELECT value FROM app_settings WHERE key = $1 (160ms)
+DB query: SELECT value FROM app_settings WHERE key = $1 (160ms)
+DB query: SELECT value FROM app_settings WHERE key = $1 (161ms)
+GET /api/settings/public 304 163.027 ms - -
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (1164ms)
+POST /api/products 400 4094.567 ms - 174
+DB query: SELECT id, full_name, email, phone, role, is_active, is_bann (155ms)
+POST /api/products 400 1930.590 ms - 169
+^C
+                                                                                                                                                                                                                                            
+┌──(ghost㉿kali)-[~/projects/jiji-yazip-main]
+└─$ npm run dev
+
+> jiji-ya-chogoria@1.0.0 dev
+> node server.js
+
+◇ injected env (16) from .env // tip: ⌘ override existing { override: true }
+
+🚀  Jiji ya Chogoria  — port 5000  [development]
+    MegaPay   : ✓
+    Cloudinary: ✓
+    Google    : ✗ not configured
+^C
+                                                                                                                                                                                                                                            
+┌──(ghost㉿kali)-[~/projects/jiji-yazip-main]
+└─$ 

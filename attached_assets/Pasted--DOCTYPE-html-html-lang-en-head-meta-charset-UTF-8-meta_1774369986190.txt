@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛍️ Jiji ya Chogoria - Login / Signup</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+      /* 🌙 Dark Orange Theme - Sleek, Modern & Mobile-Friendly */
+      :root {
+        --bg: #000;
+        --card: #121111;
+        --accent1: #ff6b35;
+        --accent2: #ff8c42;
+        --text: #fff;
+        --subtext: #aaa;
+        --error: #ff4b4b;
+        --success: #4caf50;
+        --radius: 14px;
+        --shadow: 0 0 20px rgba(0, 0, 0, 0.25);
+        --transition: all 0.3s ease;
+      }
+      * {
+        margin: 0; padding: 0; box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        text-align: center;
+        padding: 1.2rem;
+      }
+      header {
+        margin-bottom: 1.5rem;
+        animation: fadeIn 1.2s ease;
+      }
+      header h1 {
+        font-size: 2rem;
+        background: linear-gradient(135deg, var(--accent1), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      header p {
+        color: var(--subtext);
+        font-size: 1rem;
+      }
+      .form-container {
+        background: var(--card);
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        width: 100%;
+        max-width: 380px;
+        box-shadow: var(--shadow);
+        animation: fadeInUp 1s ease;
+      }
+      .hidden { display: none; }
+
+      h2 {
+        background: linear-gradient(135deg, var(--accent1), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.9rem;
+        margin: 0.5rem 0;
+        border: none;
+        border-radius: var(--radius);
+        background: #1a1a1a;
+        color: var(--text);
+        font-size: 1rem;
+        transition: var(--transition);
+      }
+      input:focus {
+        background: #222;
+        outline: 2px solid var(--accent1);
+      }
+
+      button {
+        width: 100%;
+        padding: 0.9rem;
+        background: linear-gradient(135deg, var(--accent1), var(--accent2));
+        border: none;
+        color: #fff;
+        font-weight: bold;
+        border-radius: 30px;
+        margin-top: 0.6rem;
+        font-size: 1.05rem;
+        transition: var(--transition);
+      }
+      button:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
+      }
+
+      .form-toggle p {
+        color: var(--subtext);
+        margin-top: 1rem;
+        font-size: 0.95rem;
+      }
+      .form-toggle a {
+        color: var(--accent1);
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1a1a1a;
+        padding: 1rem 1.5rem;
+        border-radius: 20px;
+        font-size: 1rem;
+        color: #fff;
+        opacity: 0.95;
+        box-shadow: var(--shadow);
+        animation: fadeInUp 0.5s ease;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 90%;
+      }
+      .toast.success { border-left: 5px solid var(--success); }
+      .toast.error { border-left: 5px solid var(--error); }
+      .toast .message {
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+      .toast .toast-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 0.5rem;
+      }
+      .toast button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        margin: 0;
+        min-width: auto;
+      }
+      .toast .close-btn {
+        background: transparent;
+        border: 1px solid var(--subtext);
+        color: var(--subtext);
+      }
+      .toast .close-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .loading-spinner {
+        border: 4px solid #333;
+        border-top: 4px solid var(--accent1);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 1rem auto;
+      }
+
+      @keyframes spin { 0% {transform: rotate(0);} 100% {transform: rotate(360deg);} }
+      @keyframes fadeInUp { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+
+      footer {
+        margin-top: 1.5rem;
+        color: var(--subtext);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 480px) {
+        header h1 { font-size: 1.7rem; }
+        h2 { font-size: 1.4rem; }
+        .form-container { padding: 1.2rem; border-radius: 10px; }
+        input, button { font-size: 1rem; padding: 0.85rem; }
+      }
+      
+      /* Session check indicator */
+      .session-check {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        align-items: center;
+        background: rgba(18, 17, 17, 0.8);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: var(--subtext);
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+      }
+      
+      .session-check .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #333;
+        border-top: 2px solid var(--accent1);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 0.5rem;
+      }
+      
+      .session-check.success {
+        color: var(--success);
+      }
+      
+      .session-check.success .spinner {
+        border-top-color: var(--success);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Session check indicator -->
+    <div id="session-check" class="session-check">
+      <div class="spinner"></div>
+      <span>Checking session...</span>
+    </div>
+
+    <header>
+      <h1>🛒 Jiji ya Chogoria</h1>
+      <p>Your Local Marketplace ✨</p>
+    </header>
+
+    <main>
+      <div class="form-container">
+        <!-- Login -->
+        <div id="login-section">
+          <h2>🔑 Login</h2>
+          <div id="loading" class="hidden loading-spinner"></div>
+          <form id="login-form">
+            <input type="email" id="login-email" placeholder="📧 Email" required>
+            <input type="password" id="login-password" placeholder="🔒 Password" required>
+            <button type="submit">Login 🚀</button>
+          </form>
+          <div class="form-toggle">
+            <p>Don't have an account? <a id="show-signup">Sign Up</a></p>
+            <p><a id="show-forgot">Forgot Password?</a></p>
+          </div>
+        </div>
+
+        <!-- Signup -->
+        <div id="signup-section" class="hidden">
+          <h2>🧍‍♂️ Signup</h2>
+          <form id="signup-form">
+            <input type="text" id="signup-name" placeholder="👤 Full Name" required>
+            <input type="email" id="signup-email" placeholder="📧 Email" required>
+            <input type="password" id="signup-password" placeholder="🔒 Password" required>
+            <button type="submit">Sign Up 🎉</button>
+          </form>
+          <div class="form-toggle">
+            <p>Already have an account? <a id="show-login">Log In</a></p>
+          </div>
+        </div>
+
+        <!-- Forgot Password -->
+        <div id="forgot-section" class="hidden">
+          <h2>🔁 Reset Password</h2>
+          <form id="forgot-form">
+            <input type="email" id="forgot-email" placeholder="📧 Enter your email" required>
+            <button type="submit">Send Reset Link 📩</button>
+          </form>
+          <div class="form-toggle">
+            <p>Remembered? <a id="show-login-2">Go Back</a></p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>© 2025 <b>KHAMIC.inc</b></p>
+    </footer>
+
+    <script>
+      // Check if Supabase is loaded
+      if (!window.supabase) {
+        document.body.innerHTML = '<div class="toast error">❌ Failed to load Supabase. Please check your network and refresh.</div>';
+        throw new Error('Supabase script not loaded');
+      }
+
+      const supabase = window.supabase.createClient(
+        'https://lrezerxsbuekkhmpverr.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyZXplcnhzYnVla2tobXB2ZXJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzNTI3MjMsImV4cCI6MjA3MzkyODcyM30.96senppPRMHveFi2ouDPDqhh17XIwxsLvA4U0rvjU9g'
+      );
+      const loginSection = document.getElementById('login-section');
+      const signupSection = document.getElementById('signup-section');
+      const forgotSection = document.getElementById('forgot-section');
+      const loading = document.getElementById('loading');
+      const sessionCheck = document.getElementById('session-check');
+
+      let userInteracted = false;
+      let autoLoginInProgress = false;
+
+      function showToast(msg, type = 'success', buttons = null) {
+        document.querySelectorAll('.toast').forEach(t => t.remove());
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        const messageEl = document.createElement('div');
+        messageEl.className = 'message';
+        messageEl.textContent = msg;
+        toast.appendChild(messageEl);
+        
+        if (buttons && buttons.length > 0) {
+          const buttonContainer = document.createElement('div');
+          buttonContainer.className = 'toast-buttons';
+          
+          buttons.forEach(btn => {
+            const buttonEl = document.createElement('button');
+            buttonEl.textContent = btn.text;
+            buttonEl.className = btn.class || '';
+            buttonEl.onclick = btn.onClick;
+            buttonContainer.appendChild(buttonEl);
+          });
+          
+          toast.appendChild(buttonContainer);
+          
+          // Auto-remove after 15 seconds if not manually closed
+          setTimeout(() => {
+            if (document.body.contains(toast)) {
+              toast.style.animation = 'fadeOut 0.5s ease forwards';
+              setTimeout(() => toast.remove(), 500);
+            }
+          }, 15000);
+        } else {
+          // Auto-remove after 3 seconds
+          toast.style.animation = 'fadeInUp 0.5s ease, fadeOut 0.5s ease 2.5s forwards';
+          setTimeout(() => toast.remove(), 3000);
+        }
+        
+        document.body.appendChild(toast);
+      }
+
+      function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      }
+
+      // Toggle sections
+      document.getElementById('show-signup').addEventListener('click', () => {
+        loginSection.classList.add('hidden');
+        signupSection.classList.remove('hidden');
+        loading.classList.add('hidden');
+      });
+      document.getElementById('show-login').addEventListener('click', () => {
+        signupSection.classList.add('hidden');
+        forgotSection.classList.add('hidden');
+        loginSection.classList.remove('hidden');
+        loading.classList.add('hidden');
+      });
+      document.getElementById('show-forgot').addEventListener('click', () => {
+        loginSection.classList.add('hidden');
+        forgotSection.classList.remove('hidden');
+        loading.classList.add('hidden');
+      });
+      document.getElementById('show-login-2').addEventListener('click', () => {
+        forgotSection.classList.add('hidden');
+        loginSection.classList.remove('hidden');
+        loading.classList.add('hidden');
+      });
+
+      document.querySelectorAll('input, button').forEach(el => {
+        el.addEventListener('focus', () => userInteracted = true);
+        el.addEventListener('click', () => userInteracted = true);
+      });
+
+      // Record login with device info
+      async function recordLogin(userId) {
+        try {
+          const deviceInfo = navigator.userAgent; // can expand later to IP etc.
+          const { error } = await supabase.from('user_logins').insert({
+            user_id: userId,
+            login_time: new Date().toISOString(),
+            device_info: deviceInfo
+          });
+          if (error) console.error('Error recording login:', error);
+        } catch (err) {
+          console.error('recordLogin error:', err);
+        }
+      }
+
+      // Check recent login from same device
+      async function checkRecentLoginWithDevice(userId) {
+        try {
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+          const deviceInfo = navigator.userAgent;
+
+          const { data, error } = await supabase
+            .from('user_logins')
+            .select('login_time, device_info')
+            .eq('user_id', userId)
+            .gte('login_time', oneWeekAgo.toISOString())
+            .order('login_time', { ascending: false })
+            .limit(5); // fetch last 5 logins
+
+          if (error) {
+            console.error('Error fetching recent logins:', error);
+            return false;
+          }
+
+          // Check if any recent login is from the same device
+          return data.some(entry => entry.device_info === deviceInfo);
+        } catch (err) {
+          console.error('checkRecentLoginWithDevice error:', err);
+          return false;
+        }
+      }
+
+      function updateSessionIndicator(text, success = false) {
+        const span = sessionCheck.querySelector('span');
+        span.textContent = text;
+        if (success) sessionCheck.classList.add('success');
+        setTimeout(() => {
+          sessionCheck.style.opacity = '0';
+          setTimeout(() => (sessionCheck.style.display = 'none'), 300);
+        }, 2000);
+      }
+
+      // Auto-login on page load
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(async () => {
+          try {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) throw error;
+
+            if (session) {
+              updateSessionIndicator('Session found, verifying...', true);
+              const recentLogin = await checkRecentLoginWithDevice(session.user.id);
+
+              if (recentLogin) {
+                autoLoginInProgress = true;
+                updateSessionIndicator('Welcome back! Redirecting...', true);
+                if (!userInteracted) {
+                  setTimeout(() => (window.location.href = 'dashboard.html'), 800);
+                } else {
+                  showToast('✅ You\'re logged in! Continue to dashboard.', 'success', [
+                    {
+                      text: 'Go to Dashboard',
+                      onClick: () => (window.location.href = 'dashboard.html')
+                    }
+                  ]);
+                }
+              } else {
+                await supabase.auth.signOut();
+                updateSessionIndicator('Session expired for this device');
+              }
+            } else {
+              updateSessionIndicator('No active session');
+            }
+          } catch (err) {
+            console.error('Auto-login error:', err);
+            updateSessionIndicator('Session check failed');
+          }
+        }, 100);
+      });
+
+      // Login form submit
+      document.getElementById('login-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+
+        if (!isValidEmail(email)) return showToast('❌ Enter valid email', 'error');
+        if (!password) return showToast('❌ Enter password', 'error');
+
+        loading.classList.remove('hidden');
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          loading.classList.add('hidden');
+          if (error) return showToast(`❌ ${error.message}`, 'error');
+
+          await recordLogin(data.user.id);
+          showToast('✅ Login successful! Redirecting...', 'success');
+          setTimeout(() => (window.location.href = 'dashboard.html'), 1200);
+        } catch (err) {
+          loading.classList.add('hidden');
+          showToast('❌ Unexpected error', 'error');
+        }
+      });
+
+      // 🆕 Signup
+      document.getElementById('signup-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = document.getElementById('signup-name').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value.trim();
+
+        if (!name) {
+          showToast('❌ Please enter your full name', 'error');
+          return;
+        }
+        if (!isValidEmail(email)) {
+          showToast('❌ Please enter a valid email address', 'error');
+          return;
+        }
+        if (password.length < 6) {
+          showToast('❌ Password must be at least 6 characters', 'error');
+          return;
+        }
+
+        loading.classList.remove('hidden');
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: { full_name: name },
+              emailRedirectTo: "https://emannuh254.github.io/jiji-ya-chogoria/dashboard.html"
+            }
+          });
+          loading.classList.add('hidden');
+          
+          if (error) {
+            showToast(`❌ ${error.message}`, 'error');
+            return;
+          }
+          
+          // Show toast with verify email button
+          showToast('📧 Account created! Check your email to verify.', 'success', [
+            {
+              text: 'Verify Email',
+              class: '',
+              onClick: () => {
+                // Open email client based on email domain
+                if (email.toLowerCase().includes('@gmail.com')) {
+                  window.open('https://mail.google.com', '_blank');
+                } else if (email.toLowerCase().includes('@yahoo.com')) {
+                  window.open('https://mail.yahoo.com', '_blank');
+                } else if (email.toLowerCase().includes('@outlook.com') || email.toLowerCase().includes('@hotmail.com')) {
+                  window.open('https://outlook.live.com', '_blank');
+                } else {
+                  // For other email providers, open default mail client
+                  window.location.href = `mailto:${email}`;
+                }
+              }
+            },
+            {
+              text: 'Close',
+              class: 'close-btn',
+              onClick: () => {
+                document.querySelectorAll('.toast').forEach(t => t.remove());
+              }
+            }
+          ]);
+          
+          // Switch to login form
+          signupSection.classList.add('hidden');
+          loginSection.classList.remove('hidden');
+        } catch (err) {
+          loading.classList.add('hidden');
+          showToast('❌ An unexpected error occurred', 'error');
+        }
+      });
+
+      // 🔁 Forgot password
+      document.getElementById('forgot-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const email = document.getElementById('forgot-email').value.trim();
+
+        if (!isValidEmail(email)) {
+          showToast('❌ Please enter a valid email address', 'error');
+          return;
+        }
+
+        loading.classList.remove('hidden');
+        try {
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: 'https://emannuh254.github.io/jiji-ya-chogoria/reset.html'
+          });
+          loading.classList.add('hidden');
+          
+          if (error) {
+            showToast(`❌ ${error.message}`, 'error');
+            return;
+          }
+          
+          // Show toast with check email button
+          showToast('📩 Password reset link sent! Check your email.', 'success', [
+            {
+              text: 'Check Email',
+              class: '',
+              onClick: () => {
+                // Open email client based on email domain
+                if (email.toLowerCase().includes('@gmail.com')) {
+                  window.open('https://mail.google.com', '_blank');
+                } else if (email.toLowerCase().includes('@yahoo.com')) {
+                  window.open('https://mail.yahoo.com', '_blank');
+                } else if (email.toLowerCase().includes('@outlook.com') || email.toLowerCase().includes('@hotmail.com')) {
+                  window.open('https://outlook.live.com', '_blank');
+                } else {
+                  // For other email providers, open default mail client
+                  window.location.href = `mailto:${email}`;
+                }
+              }
+            },
+            {
+              text: 'Close',
+              class: 'close-btn',
+              onClick: () => {
+                document.querySelectorAll('.toast').forEach(t => t.remove());
+              }
+            }
+          ]);
+          
+          // Switch back to login form
+          forgotSection.classList.add('hidden');
+          loginSection.classList.remove('hidden');
+        } catch (err) {
+          loading.classList.add('hidden');
+          showToast('❌ An unexpected error occurred', 'error');
+        }
+      });
+    </script>
+  </body>
+</html>

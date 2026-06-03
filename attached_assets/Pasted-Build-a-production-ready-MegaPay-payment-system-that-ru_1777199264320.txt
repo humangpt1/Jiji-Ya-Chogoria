@@ -1,0 +1,112 @@
+Build a production-ready MegaPay payment system that runs fully on Vercel using a serverless architecture.
+
+STACK:
+
+* Next.js (App Router, TypeScript)
+* TailwindCSS (modern UI with dark/light mode)
+* Supabase (Postgres, Auth, Storage)
+* Deploy everything on Vercel
+
+CORE REQUIREMENTS:
+
+* Must be fully serverless (no background workers)
+* Must handle MegaPay STK Push payments
+* Must process webhooks reliably
+* Must support reuse across multiple apps
+
+PAYMENT FLOW (SERVERLESS SAFE):
+
+1. User initiates payment from frontend
+2. Call /api/pay (Vercel API route)
+3. API calls MegaPay STK Push endpoint
+4. Store transaction in Supabase as "pending"
+5. Immediately return response to frontend
+6. DO NOT wait for payment confirmation
+
+WEBHOOK HANDLING:
+
+* Create /api/webhook endpoint on Vercel
+* Must:
+
+  * Parse JSON body
+  * Validate TransactionReference
+  * Match with database record
+  * Ensure idempotency (no duplicate updates)
+  * Update payment status:
+    success → "completed"
+    failure → "failed"
+* Respond with HTTP 200 within 10 seconds
+
+DATABASE SCHEMA:
+payments table:
+
+* id (uuid)
+* user_id (uuid)
+* app_name (text)
+* reference (unique)
+* transaction_id (text)
+* amount (numeric)
+* status (pending/completed/failed)
+* metadata (jsonb)
+* created_at
+
+IMPORTANT:
+
+* Add unique constraint on reference
+* Prevent duplicate webhook processing
+
+API ROUTES:
+
+1. POST /api/pay
+
+   * Input: phone, amount, app_name
+   * Generate unique reference
+   * Call MegaPay STK Push
+   * Store transaction in Supabase
+
+2. POST /api/webhook
+
+   * Handle MegaPay callback
+   * Validate payload
+   * Update payment status
+   * Trigger business logic (e.g., create ad)
+
+3. POST /api/status (optional fallback)
+
+   * Query MegaPay transaction status API
+
+FRONTEND:
+
+* Payment modal:
+
+  * phone input
+  * amount display
+* Dashboard:
+
+  * payment history
+  * real-time updates using Supabase subscriptions
+* Dark/light mode toggle
+
+SECURITY:
+
+* Store MegaPay API key in Vercel environment variables
+* NEVER expose API key in frontend
+* Validate all webhook payloads
+* Log all webhook events
+
+VERCEL OPTIMIZATION:
+
+* Use edge-compatible API routes where possible
+* Avoid long blocking operations
+* Keep functions under execution limits
+* Use Supabase for all persistence
+
+WITHDRAWALS:
+
+* Since MegaPay wallet API is not public:
+
+  * Implement withdrawal requests table
+  * Admin manually processes withdrawals
+
+GOAL:
+Create a scalable, reusable MegaPay payment system that runs entirely on Vercel with Supabase as backend, supporting multiple apps and handling real-world payment reliability.
